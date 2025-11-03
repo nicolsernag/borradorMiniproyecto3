@@ -20,7 +20,7 @@ public class Deck {
     private void initializeDeck() {
         for (CardEnum cardEnum : CardEnum.values()) {
             if(cardEnum != CardEnum.CARD_FACE_DOWN){
-                deckOfCards.push(new Card(cardEnum));
+                deckOfCards.push(new Card(cardEnum.getFilePath(), getCardValue(cardEnum.name())));
             }
         }
         Collections.shuffle(deckOfCards);
