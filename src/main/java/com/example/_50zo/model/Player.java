@@ -4,14 +4,12 @@ import java.util.ArrayList;
 
 public class Player {
     private ArrayList<Card> cardsPlayer;
-    private String typePlayer;
 
     /**
      * Constructs a new Player object with an empty hand of cards.
      */
-    public Player(String typePlayer){
+    public Player(){
         this.cardsPlayer = new ArrayList<Card>();
-        this.typePlayer = typePlayer;
     };
 
     /**

@@ -2,6 +2,7 @@ package com.example._50zo.controller;
 
 import com.example._50zo.model.*;
 import javafx.fxml.FXML;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -13,8 +14,6 @@ import com.example._50zo.model.CardEnum;
 public class GameStage2Controller {
 
     private int numMachinePlayers; // valor que viene del menú
-
-    private List<Player> machinePlayers = new ArrayList<>();
 
     @FXML private GridPane gridMachine1;
     @FXML private GridPane gridMachine2;
@@ -29,16 +28,11 @@ public class GameStage2Controller {
     @FXML
     private ImageView Deck;
 
-    private List<Player> players;
     private Deck deck;
 
-    private Player machinePlayer;
-
     private Player humanPlayer;
+    private List<Player> machinePlayers = new ArrayList<>();
 
-    private Game50 game50;
-
-    private int posInitCardToShow;
 
     private List<GridPane> machineGrids = new ArrayList<>();
 
@@ -46,30 +40,77 @@ public class GameStage2Controller {
         this.numMachinePlayers = num;
     }
 
+    public void initVariables(){
+        machineGrids = List.of(gridMachine1, gridMachine2, gridMachine3);
+    }
+
     public void initGame() {
+        initVariables();
+        humanPlayer = new Player();
+        createMachinePlayers();
         deck = new Deck();
         deck.shuffle();
 
-
-        humanPlayer = new Player("Human");
-
-        machinePlayers.clear();
-        for (int i = 1; i <= numMachinePlayers; i++) {
-            machinePlayers.add(new Player("CPU" + i));
-        }
-
         dealCard();
-
+        //dealCardMachine();
+        showHumanCards();
+        showMachineCards();
     }
 
-    private void dealCard(){
-        for (int i = 0; i < 10; i++) {
-            humanPlayer.addCard(deck.takeCard());
+    private void createMachinePlayers(){
+        for (int i = 0; i < numMachinePlayers; i++) {
+            machinePlayers.add(new Player());
+        }
+    }
 
-            for (Player cpu : machinePlayers) {
-                cpu.addCard(deck.takeCard());
+
+    private void dealCard(){
+        for (int i = 0; i < 4; i++) {
+            Card c = deck.takeCard();
+            humanPlayer.addCard(c);
+            System.out.println("Humano recibe: " + c.getValue());
+        }
+
+        for(Player machine : machinePlayers){
+            for (int i = 0; i < 4; i++) {
+                machine.addCard(deck.takeCard());
             }
         }
     }
 
+    private void dealCardMachine(){
+        for (int i = 0; i < numMachinePlayers; i++) {
+            for (Player cpu : machinePlayers) {
+                Card cpuCard = deck.takeCard();
+                cpu.addCard(cpuCard);
+                System.out.println("CPU recibe: " + cpuCard.getValue());
+            }
+        }
+    }
+
+    private void showMachineCards(){
+        for (int i = 0; i < 3; i++) {
+            GridPane grid = machineGrids.get(i);
+
+            if(i < machinePlayers.size()){
+                grid.setVisible(true);
+                grid.getChildren().clear();
+                Player cpu = machinePlayers.get(i);
+                int col = 0;
+                for (Card card : cpu.getCardsPlayer()) {  // bocarriba como pediste
+                    grid.add(card.getCard(), col++, 0);
+                }
+            } else {
+                grid.setVisible(false);
+            }
+        }
+    }
+
+    private void showHumanCards (){
+        gridPaneHumanPlayer.getChildren().clear();
+        int col = 0;
+        for (Card card : humanPlayer.getCardsPlayer()){
+            gridPaneHumanPlayer.add(card.getCard(), col++, 0);
+        }
+    }
 }
