@@ -13,13 +13,12 @@ public class Game50 {
      * Constructs a new GameUno instance.
      *
      * @param humanPlayer   The human player participating in the game.
-     * @param machinePlayer The machine player participating in the game.
      * @param deck          The deck of cards used in the game.
      * @param table         The table where cards are placed during the game.
      */
-    public Game50(Player humanPlayer, Player machinePlayer, Deck deck, Table table) {
+    public Game50(Player humanPlayer, Deck deck, Table table) {
         this.humanPlayer = humanPlayer;
-        this.machinePlayer = machinePlayer;
+        //this.machinePlayer = machinePlayer;
         this.deck = deck;
         this.table = table;
     }
@@ -39,25 +38,19 @@ public class Game50 {
         }
         //firstCard();
     }
-    /**
-     * Retrieves the current visible cards of the human player starting from a specific position.
-     *
-     * @param posInitCardToShow The initial position of the cards to show.
-     * @return An array of cards visible to the human player.
-     */
-    public Card[] getCurrentVisibleCardsHumanPlayer(int posInitCardToShow) {
-        int totalCards = this.humanPlayer.getCardsPlayer().size();
-        int numVisibleCards = Math.min(4, totalCards - posInitCardToShow);
-        Card[] cards = new Card[numVisibleCards];
 
-        for (int i = 0; i < numVisibleCards; i++) {
-            cards[i] = this.humanPlayer.getCard(posInitCardToShow + i);
-        }
 
-        return cards;
+    public Card playCard(Player player, Card card) {
+        this.table.addCardOnTheTable(card);
+        player.getCardsPlayer().remove(card);
+        return card;
     }
 
-    public void playCard(Card card) {
-        this.table.addCardOnTheTable(card);
+    public Card drawFromDeck(){
+        return deck.takeCard();
+    }
+
+    public Deck getDeck() {
+        return deck;
     }
 }

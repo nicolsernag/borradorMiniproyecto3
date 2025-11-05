@@ -9,8 +9,6 @@ public class Card{
     private Image image;
     private ImageView cardImageView;
 
-
-
     public Card(String url, String value) {
         this.url = url;
         this.value = value;

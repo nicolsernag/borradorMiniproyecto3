@@ -48,4 +48,13 @@ public class Player {
     public Card getCard(int index){
         return cardsPlayer.get(index);
     }
+
+    //Inserta una carta en una posicion especifica
+    public void addCardAt(int index, Card card) {
+        if (index >= 0 && index <= cardsPlayer.size()) {
+            cardsPlayer.add(index, card);
+        } else {
+            cardsPlayer.add(card);
+        }
+    }
 }

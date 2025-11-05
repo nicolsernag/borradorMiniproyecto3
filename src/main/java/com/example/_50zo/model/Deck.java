@@ -74,4 +74,13 @@ public class Deck {
     public void shuffle(){
         Collections.shuffle(deckOfCards);
     }
+
+    /**
+     * Checks if the deck is empty.
+     *
+     * @return true if the deck is empty, false otherwise
+     */
+    public boolean isEmpty() {
+        return deckOfCards.isEmpty();
+    }
 }
