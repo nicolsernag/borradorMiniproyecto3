@@ -20,7 +20,7 @@ public class Deck {
     private void initializeDeck() {
         for (CardEnum cardEnum : CardEnum.values()) {
             if(cardEnum != CardEnum.CARD_FACE_DOWN){
-                deckOfCards.push(new Card(cardEnum));
+                deckOfCards.push(new Card(cardEnum.getFilePath(), getCardValue(cardEnum.name())));
             }
         }
         Collections.shuffle(deckOfCards);
@@ -73,5 +73,14 @@ public class Deck {
 
     public void shuffle(){
         Collections.shuffle(deckOfCards);
+    }
+
+    /**
+     * Checks if the deck is empty.
+     *
+     * @return true if the deck is empty, false otherwise
+     */
+    public boolean isEmpty() {
+        return deckOfCards.isEmpty();
     }
 }

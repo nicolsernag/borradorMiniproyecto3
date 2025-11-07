@@ -10,7 +10,7 @@
    <children>
       <ImageView fx:id="Deck" fitHeight="128.0" fitWidth="82.0" layoutX="278.0" layoutY="224.0" pickOnBounds="true" preserveRatio="true" />
       <ImageView fx:id="Table" fitHeight="128.0" fitWidth="82.0" layoutX="451.0" layoutY="224.0" pickOnBounds="true" preserveRatio="true" />
-      <GridPane fx:id="GPMachine1" layoutX="239.0" layoutY="55.0" prefHeight="86.0" prefWidth="326.0">
+      <GridPane fx:id="gridMachine1" layoutX="239.0" layoutY="55.0" prefHeight="86.0" prefWidth="326.0">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -21,7 +21,7 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
       </GridPane>
-      <GridPane fx:id="ǴridPaneHumanPlayer" layoutX="238.0" layoutY="463.0" prefHeight="86.0" prefWidth="326.0">
+      <GridPane fx:id="gridPaneHumanPlayer" layoutX="238.0" layoutY="463.0" prefHeight="86.0" prefWidth="326.0">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -32,7 +32,18 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
       </GridPane>
-      <GridPane fx:id="GPMachine2" layoutX="-67.0" layoutY="237.0" prefHeight="86.0" prefWidth="326.0" rotate="98.6">
+      <GridPane fx:id="gridMachine2" layoutX="-67.0" layoutY="237.0" prefHeight="86.0" prefWidth="326.0" rotate="98.6">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+      </GridPane>
+      <GridPane fx:id="gridMachine3" layoutX="537.0" layoutY="237.0" prefHeight="86.0" prefWidth="326.0" rotate="-106.9">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />

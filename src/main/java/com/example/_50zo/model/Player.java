@@ -4,14 +4,12 @@ import java.util.ArrayList;
 
 public class Player {
     private ArrayList<Card> cardsPlayer;
-    private String typePlayer;
 
     /**
      * Constructs a new Player object with an empty hand of cards.
      */
-    public Player(String typePlayer){
+    public Player(){
         this.cardsPlayer = new ArrayList<Card>();
-        this.typePlayer = typePlayer;
     };
 
     /**
@@ -49,5 +47,14 @@ public class Player {
      */
     public Card getCard(int index){
         return cardsPlayer.get(index);
+    }
+
+    //Inserta una carta en una posicion especifica
+    public void addCardAt(int index, Card card) {
+        if (index >= 0 && index <= cardsPlayer.size()) {
+            cardsPlayer.add(index, card);
+        } else {
+            cardsPlayer.add(card);
+        }
     }
 }
