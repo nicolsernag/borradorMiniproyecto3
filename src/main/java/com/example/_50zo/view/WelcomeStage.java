@@ -1,5 +1,7 @@
 package com.example._50zo.view;
 
+import com.example._50zo.controller.FirstStageController;
+import com.example._50zo.controller.WelcomeStageController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -9,6 +11,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class WelcomeStage extends Stage {
+    private WelcomeStageController controller;
     private WelcomeStage() throws IOException {
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("/com/example/_50zo/welcomeStage.fxml"));
@@ -17,10 +20,14 @@ public class WelcomeStage extends Stage {
         setScene(scene);
         setTitle("50zo");
         setResizable(false);
-        //getIcons().add(
-         //       new Image(String.valueOf(getClass().getResource("/com/example/demosudoku/favicon.png")))
-        //);
+        getIcons().add(
+              new Image(String.valueOf(getClass().getResource("/com/example/_50zo/mano.png")))
+        );
         show();
+    }
+
+    public WelcomeStageController getController(){
+        return controller;
     }
 
     /**

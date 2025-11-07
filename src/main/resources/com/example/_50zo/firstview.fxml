@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="436.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example._50zo.controller.FirstStageController">
+   <children>
+      <ImageView fitHeight="436.0" fitWidth="733.0" layoutX="-16.0">
+         <image>
+            <Image url="@image1.1.jpg" />
+         </image>
+      </ImageView>
+      <Button layoutX="287.0" layoutY="290.0" mnemonicParsing="false" onAction="#handlePlay" prefHeight="42.0" prefWidth="125.0" style="-fx-background-radius: 10; -fx-background-color: #e32f09;" text="INICIAR" textFill="#f9f09c">
+         <font>
+            <Font name="Arial Rounded MT Bold" size="18.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="CLOSED_HAND" />
+         </cursor>
+      </Button>
+   </children>
+</AnchorPane>

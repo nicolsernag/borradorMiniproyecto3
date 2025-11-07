@@ -1,6 +1,6 @@
 package com.example._50zo.view;
 
-import com.example._50zo.controller.GameStage2Controller;
+import com.example._50zo.controller.FirstStageController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -9,16 +9,16 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class GameStage2 extends Stage {
-    private GameStage2Controller controller;
+public class FirstStage extends Stage {
+    private FirstStageController controller;
     /**
      * Creates and initializes the main window of the Sudoku game.
      * Associates its controller, configures the scene, the title, and the icon of the window, and finally displays it on the screen.
      * @throws IOException if an error occurs when loading the FXML file.
      */
-    private GameStage2() throws IOException {
+    private FirstStage() throws IOException {
         FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/com/example/_50zo/gameStage2p.fxml"));
+                getClass().getResource("/com/example/_50zo/firstview.fxml"));
         Parent root= loader.load();
         controller= loader.getController();
         Scene scene = new Scene(root);
@@ -26,7 +26,7 @@ public class GameStage2 extends Stage {
         setTitle("50zo");
         setResizable(false);
         getIcons().add(
-                new Image(String.valueOf(getClass().getResource("/com/example/_50zo/mano.png")))
+              new Image(String.valueOf(getClass().getResource("/com/example/_50zo/mano.png")))
         );
         show();
     }
@@ -35,7 +35,7 @@ public class GameStage2 extends Stage {
      * Get the controller associated with the game view.
      * @return The controller that manages the game logic.
      */
-    public GameStage2Controller getController(){
+    public FirstStageController getController(){
         return controller;
     }
 
@@ -43,7 +43,7 @@ public class GameStage2 extends Stage {
      * Static internal class used to maintain a single instance according to the Singleton pattern.
      */
     private static class Holder{
-        private static GameStage2 INSTANCE=null;
+        private static FirstStage INSTANCE=null;
     }
 
     /**
@@ -53,10 +53,10 @@ public class GameStage2 extends Stage {
      * @return the single instance of SudokuGameStage.
      * @throws IOException if an error occurs while creating a new instance.
      */
-    public static GameStage2 getInstance() throws IOException{
-        GameStage2.Holder.INSTANCE = GameStage2.Holder.INSTANCE != null ?
-                GameStage2.Holder.INSTANCE : new GameStage2();
-        return GameStage2.Holder.INSTANCE;
+    public static FirstStage getInstance() throws IOException{
+        FirstStage.Holder.INSTANCE = FirstStage.Holder.INSTANCE != null ?
+                FirstStage.Holder.INSTANCE : new FirstStage();
+        return FirstStage.Holder.INSTANCE;
     }
 
     /**
@@ -65,6 +65,8 @@ public class GameStage2 extends Stage {
      * when the game interface needs to be restarted.
      */
     public static void deleteInstance(){
-        GameStage2.Holder.INSTANCE.close();
+        FirstStage.Holder.INSTANCE.close();
     }
 }
+
+
