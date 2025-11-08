@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -54,5 +55,7 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
       </GridPane>
+      <Label fx:id="labelTable" layoutX="478.0" layoutY="186.0" />
+      <Label fx:id="msgHumanPlayer" layoutX="387.0" layoutY="407.0" text="Label" />
    </children>
 </AnchorPane>
