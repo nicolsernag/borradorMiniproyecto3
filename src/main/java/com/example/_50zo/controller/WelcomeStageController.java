@@ -5,6 +5,7 @@ import com.example._50zo.view.WelcomeStage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import com.example._50zo.view.WelcomeStage;
 
 import java.io.IOException;
 
@@ -23,7 +24,9 @@ public class WelcomeStageController {
             WelcomeStage.deleteInstance();
             game.getController().setNumMachinePlayers(numMachinePlayers);
             game.getController().initGame();
+            WelcomeStage.deleteInstance();
         } catch (Exception e) {
+            System.err.println("Error al iniciar el juego: " + e.getMessage());
             e.printStackTrace();
         }
     }

@@ -1,13 +1,14 @@
 package com.example._50zo.model;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Stack;
 
 public class Deck {
     private Stack<Card> deckOfCards;
 
     /**
-     * Constructs a new deck of Uno cards and initializes it.
+     * Constructs a new deck of cards and initializes it.
      */
     public Deck() {
         deckOfCards = new Stack<>();
@@ -15,7 +16,7 @@ public class Deck {
     }
 
     /**
-     * Initializes the deck with cards based on the EISCUnoEnum values.
+     * Initializes the deck with cards based on the values.
      */
     private void initializeDeck() {
         for (CardEnum cardEnum : CardEnum.values()) {
@@ -28,7 +29,7 @@ public class Deck {
 
     private String getCardValue(String name) {
         if (name.endsWith("9")){
-            return "0";
+            return "9";
         } else if (name.endsWith("1")){
             return "A"; //Su valor es 1 o 10, segun convenga
         } else if (name.endsWith("2")){
@@ -72,6 +73,7 @@ public class Deck {
     }
 
     public void shuffle(){
+
         Collections.shuffle(deckOfCards);
     }
 
@@ -82,5 +84,33 @@ public class Deck {
      */
     public boolean isEmpty() {
         return deckOfCards.isEmpty();
+    }
+
+    /**
+     * Refills the deck from the table (except the last card).
+     */
+    public void refillFromTable(List<Card> cardsFromTable) {
+        if(cardsFromTable == null || cardsFromTable.isEmpty()) return;
+        Collections.shuffle(cardsFromTable);
+        for ( Card c : cardsFromTable ) {
+            deckOfCards.push(c);
+        }
+    }
+
+    /**
+     * Adds a single card to the bottom of the deck.
+     */
+    public void addToBottom(Card card){
+        if(card != null){
+            deckOfCards.insertElementAt(card, 0);
+        }
+    }
+
+    public void addAllToBottom(List<Card> cards){
+        if(cards != null && !cards.isEmpty()){
+            for ( int i = cards.size() - 1; i >= 0; i-- ) {
+                deckOfCards.insertElementAt(cards.get(i), 0);
+            }
+        }
     }
 }

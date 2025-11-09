@@ -1,115 +1,83 @@
 package com.example._50zo.model.Threads;
 
-import com.example._50zo.model.*;
-import javafx.application.Platform;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
-
-import java.util.List;
-import java.util.function.IntConsumer;
+import com.example._50zo.model.Card;
+import com.example._50zo.model.Game50;
+import com.example._50zo.model.Player;
 
 /**
- * This class represents a thread that controls the turns of the machine players
+ * Represents a concurrent thread controlling a single machine player's turn
  * in the "Cincuentazo" game.
  * <p>
- * Each machine plays its turn automatically, placing a valid card on the table
- * if possible, and drawing a new one from the deck if available.
+ * Each machine waits a random delay (between 2 and 4 seconds) to simulate
+ * thinking time before attempting to play a valid card.
+ * <p>
+ * If the machine cannot play any card without exceeding 50, it is eliminated.
+ * The thread safely updates the user interface using a provided {@code Runnable}
+ * executed through {@link javafx.application.Platform#runLater(Runnable)}.
  */
 public class MachineThread extends Thread{
-    private final List<Player> machinePlayers;
-    private final List<GridPane> machineGrids;
-    private final Deck deck;
+    /** The machine player controlled by this thread. */
+    private final Player machinePlayer;
+
+    /** The main game logic controller. */
     private final Game50 game;
-    private final Table table;
-    private final ImageView tableImageView;
-    private final Runnable updateMachineCards; // callback para refrescar las cartas
-    private final java.util.function.IntConsumer updateMesaValue; // callback para sumar el valor
-    private int counterTable;
+
+    /** Runnable action executed to update the JavaFX UI after the machine plays. */
+    private final Runnable updateUI;
 
     /**
-     * Creates a new thread to control machine players’ turns.
+     * Constructs a new {@code MachineThread}.
      *
-     * @param table              The table where cards are placed.
-     * @param machinePlayers     The list of machine players.
-     * @param machineGrids       The GridPanes displaying each machine’s cards.
-     * @param deck               The deck used in the game.
-     * @param game               The main game logic handler.
-     * @param tableImageView     The ImageView showing the card on the table.
-     * @param updateMachineCards Runnable action to refresh machine cards on the UI.
-     * @param updateMesaValue    Function to update the table’s accumulated value.
-     * @param counterTable       Initial total value on the table.
+     * @param machinePlayer the machine player that this thread controls
+     * @param game          the main {@link Game50} instance handling logic
+     * @param updateUI      a {@link Runnable} executed on the JavaFX Application Thread
+     *                      to safely update the interface after a play
      */
-    public MachineThread(Table table,List<Player> machinePlayers, List<GridPane> machineGrids,
-                         Deck deck, Game50 game, ImageView tableImageView, Runnable updateMachineCards,
-                         IntConsumer updateMesaValue, int counterTable) {
-        this.machinePlayers = machinePlayers;
-        this.machineGrids = machineGrids;
-        this.deck = deck;
+    public MachineThread(Player machinePlayer, Game50 game, Runnable updateUI) {
+        this.machinePlayer = machinePlayer;
         this.game = game;
-        this.table = table;
-        this.tableImageView = tableImageView;
-        this.updateMachineCards = updateMachineCards;
-        this.updateMesaValue = updateMesaValue;
-        this.counterTable = counterTable;
+        this.updateUI = updateUI;
     }
+
     /**
-     * Runs the automatic turns of all machine players.
-     * <p>
-     * Each machine tries to play a card whose numeric value doesn’t exceed
-     * a total of 50 on the table. If no card can be played, the machine is
-     * eliminated from the game.
-     * <p>
-     * Between each turn, the thread sleeps for 2 seconds to simulate thinking time.
+     * Executes the machine player's turn:
+     * <ol>
+     *     <li>Waits 2–4 seconds to simulate thinking.</li>
+     *     <li>Tries to play the first valid card that does not exceed 50.</li>
+     *     <li>If no valid card is found, eliminates the player.</li>
+     *     <li>Calls {@code updateUI} to refresh the JavaFX user interface.</li>
+     * </ol>
      */
     @Override
     public void run() {
         try {
-            for (Player machine : machinePlayers) {
+            // Simulate "thinking" time between 2 and 4 seconds
+            int delay = 2000 + (int) (Math.random() * 2000);
+            Thread.sleep(delay);
 
-                // Esperar un momento antes del turno (simula el pensamiento de la máquina)
-                Thread.sleep(2000);
-
-                // Buscar una carta jugable
-                Card playableCard = null;
-                for (Card card : machine.getCardsPlayer()) {
-                    int value = card.getNumericValue(counterTable);
-                    if (counterTable + value <= 50) {
-                        playableCard = card;
+            // Attempt to play a valid card
+            if (game.hasPlayableCard(machinePlayer)) {
+                for (Card card : machinePlayer.getCardsPlayer()) {
+                    if (game.canPlayCard(card)) {
+                        game.playCard(machinePlayer, card);
                         break;
                     }
                 }
-
-                if (playableCard == null) {
-                    // Máquina eliminada si no puede jugar
-                    System.out.println("Máquina eliminada (no puede jugar sin exceder 50)");
-                    continue;
-                }
-
-                // Jugar la carta encontrada
-                Card finalCard = playableCard;
-                counterTable += finalCard.getNumericValue(counterTable);
-
-                Platform.runLater(() -> {
-                    // Actualizar la mesa visualmente
-                    table.addCardOnTheTable(finalCard);
-                    tableImageView.setImage(finalCard.getImage());
-
-                    // Eliminar la carta jugada
-                    machine.getCardsPlayer().remove(finalCard);
-
-                    // Si el mazo no está vacío, robar una nueva carta
-                    if (!deck.isEmpty()) {
-                        machine.addCard(deck.takeCard());
-                    }
-
-                    // Actualizar UI (cartas y valor de mesa)
-                    updateMachineCards.run();
-                    updateMesaValue.accept(counterTable);
-                });
+            } else {
+                // No valid cards: eliminate player
+                game.eliminatePlayer(machinePlayer);
             }
+
+            // Update the UI on the JavaFX Application Thread
+            if (updateUI != null) {
+                updateUI.run();
+            }
+
         } catch (InterruptedException e) {
-            System.out.println("Machine thread interrupted");
+            System.err.println("Hilo maquina interrumpido: " + e.getMessage());
             Thread.currentThread().interrupt();
+        } catch (Exception e) {
+            System.err.println("Error durante la ejecucion del hilo maquina: " + e.getMessage());
         }
     }
 }

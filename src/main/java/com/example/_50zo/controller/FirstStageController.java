@@ -8,10 +8,20 @@ import javafx.fxml.FXML;
 import java.io.IOException;
 
 public class FirstStageController {
+
     @FXML
-    private void handlePlay(ActionEvent event) throws IOException {
-        WelcomeStage.getInstance().getController();
-        FirstStage.deleteInstance();
+    private void handlePlay(ActionEvent event) {
+        try {
+            // Pasa a la pantalla de selección de jugadores
+            WelcomeStage.getInstance().getController();
+
+            // Cierra la pantalla actual
+            FirstStage.deleteInstance();
+
+        } catch (Exception e) {
+            System.err.println("❌ Error al abrir la pantalla de bienvenida: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
 

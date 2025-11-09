@@ -2,6 +2,7 @@ package com.example._50zo.controller;
 
 import com.example._50zo.model.*;
 import com.example._50zo.model.Threads.MachineThread;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -10,8 +11,14 @@ import javafx.scene.layout.GridPane;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.example._50zo.model.CardEnum;
 
+/**
+ * Main controller for the "Cincuentazo" game stage.
+ * <p>
+ * This class connects the user interface (JavaFX) with the game logic (Model classes),
+ * handling all events, visual updates, and turn coordination between the human
+ * player and machine opponents using concurrent threads.
+ */
 public class GameStage2Controller {
 
     private int numMachinePlayers; // valor que viene del menú
@@ -19,65 +26,88 @@ public class GameStage2Controller {
     @FXML private GridPane gridMachine1;
     @FXML private GridPane gridMachine2;
     @FXML private GridPane gridMachine3;
+    @FXML private GridPane gridPaneHumanPlayer;
 
-    @FXML
-    private GridPane gridPaneHumanPlayer;
+    @FXML private ImageView Table;
+    @FXML private ImageView Deck;
 
-    @FXML
-    private ImageView Table;
+    @FXML private Label labelTable;
+    @FXML private Label msgHumanPlayer;
 
-    @FXML
-    private Label labelTable;
-
-    @FXML
-    private Label msgHumanPlayer;
-
-    @FXML
-    private ImageView Deck;
 
     private Deck deck;
     private Table table;
-
     private Player humanPlayer;
     private List<Player> machinePlayers = new ArrayList<>();
+    private List<GridPane> machineGrids = new ArrayList<>();
 
     private Game50 game;
+    private boolean humanEliminated = false;
 
     private final Image backCardImage = new Image(
             getClass().getResourceAsStream(CardEnum.CARD_FACE_DOWN.getFilePath())
     );
 
-    private List<GridPane> machineGrids = new ArrayList<>();
-
+    /**
+     * Sets the number of machine players selected in the previous stage.
+     *
+     * @param num number of machine opponents (1–3)
+     */
     public void setNumMachinePlayers(int num) {
+
         this.numMachinePlayers = num;
     }
 
+    /**
+     * Initializes the core game objects such as the deck, table,
+     * and player instances.
+     */
     public void initVariables(){
         humanPlayer = new Player();
         deck = new Deck();
         table = new Table();
-        this.game = new Game50(humanPlayer, deck, table);
+        game = new Game50(humanPlayer, deck, table);
         machineGrids = List.of(gridMachine1, gridMachine2, gridMachine3);
     }
 
+    /**
+     * Initializes the full game session.
+     * <ul>
+     *     <li>Creates machine players</li>
+     *     <li>Shuffles the deck</li>
+     *     <li>Deals the cards to all players</li>
+     *     <li>Places the first card on the table</li>
+     *     <li>Renders all visual elements</li>
+     * </ul>
+     */
     public void initGame() {
         initVariables();
         createMachinePlayers();
         deck.shuffle();
 
-        dealCard();
+        dealCards();
+        dealCardTable();
+
         showHumanCards();
         showMachineCards();
-        dealCardTable();
+        msgHumanPlayer.setText("Tu turno. Juega una carta.");
+
     }
 
+    /**
+     * Creates the specified number of machine players.
+     */
     private void createMachinePlayers(){
         for (int i = 0; i < numMachinePlayers; i++) {
             machinePlayers.add(new Player());
         }
     }
 
+    /**
+     * Creates an ImageView for a card back image (used for hidden machine cards).
+     *
+     * @return ImageView of the back of a card
+     */
     private ImageView createBackCardImageView() {
         ImageView img = new ImageView(backCardImage);
         img.setFitWidth(82);
@@ -85,12 +115,12 @@ public class GameStage2Controller {
         return img;
     }
 
-
-    private void dealCard(){
+    /**
+     * Deals 4 cards to the human player and each machine player.
+     */
+    private void dealCards(){
         for (int i = 0; i < 4; i++) {
-            Card c = deck.takeCard();
-            humanPlayer.addCard(c);
-            System.out.println("Humano recibe: " + c.getValue());
+            humanPlayer.addCard(deck.takeCard());
         }
 
         for(Player machine : machinePlayers){
@@ -100,16 +130,19 @@ public class GameStage2Controller {
         }
     }
 
+    /**
+     * Places the first card from the deck on the table to start the game.
+     */
     private void dealCardTable(){
-        Card card = this.deck.takeCard();
+        Card card = deck.takeCard();
         table.addCardOnTheTable(card);
-        Card firstCard = table.getCurrentCardOnTheTable();
-        Table.setImage(firstCard.getImage());
-        counterTable = firstCard.getNumericValue(counterTable);
-        labelTable.setText("Total mesa: " + counterTable);
+        Table.setImage(card.getImage());
+        labelTable.setText("Total mesa: " + table.getTotalValue());
     }
 
-
+    /**
+     * Renders the machine players' cards as face-down cards in their respective grids.
+     */
     private void showMachineCards(){
         for (int i = 0; i < 3; i++) {
             GridPane grid = machineGrids.get(i);
@@ -119,7 +152,7 @@ public class GameStage2Controller {
                 grid.getChildren().clear();
                 Player cpu = machinePlayers.get(i);
                 int col = 0;
-                for (Card card : cpu.getCardsPlayer()) {
+                for (Card ignored : cpu.getCardsPlayer()) {
                     grid.add(createBackCardImageView(), col++, 0);
                 }
             } else {
@@ -128,6 +161,9 @@ public class GameStage2Controller {
         }
     }
 
+    /**
+     * Displays the human player's cards and assigns click events to each.
+     */
     private void showHumanCards (){
         gridPaneHumanPlayer.getChildren().clear();
         int col = 0;
@@ -138,10 +174,13 @@ public class GameStage2Controller {
         }
     }
 
-    private boolean humanEliminated = false;
-
     /**
-     * Asigna el evento de clic a una carta en la posición dada.
+     * Assigns the mouse click event to a specific human player card.
+     * Handles playing the card, validating the move, and updating the UI.
+     *
+     * @param img ImageView of the clicked card
+     * @param card Card object corresponding to the ImageView
+     * @param columnIndex position of the card in the player's grid
      */
     private void setupCardClick(ImageView img, Card card, int columnIndex) {
         img.setOnMouseClicked(event -> {
@@ -149,73 +188,73 @@ public class GameStage2Controller {
                 msgHumanPlayer.setText("Has sido eliminado");
                 return;
             }
-
-            int cardValue = card.getNumericValue(counterTable);
-            int possibleTotal = counterTable + cardValue;
-
-            // Verificar si al jugar la carta se pasaría de 50
+            int possibleTotal = table.getTotalValue() + card.getNumericValue(table.getTotalValue());
             if (possibleTotal > 50) {
-                msgHumanPlayer.setText("Esta carta excede el límite de 50.");
-
-                // Comprobar si el jugador tiene alguna carta jugable
-                if (!canPlayAnyCard()) {
+                msgHumanPlayer.setText("Esa carta supera 50.");
+                if (!humanPlayer.hasPlayableCard(table.getTotalValue())) {
                     humanEliminated = true;
-                    msgHumanPlayer.setText("No puedes jugar ninguna carta. Has sido eliminado del juego.");
+                    msgHumanPlayer.setText("No puedes jugar ninguna carta. Eliminado.");
+                    checkGameOver();
                 }
                 return;
             }
 
-            // Juega la carta normalmente
             game.playCard(humanPlayer, card);
             Table.setImage(card.getImage());
-            updateMesaValue(card);
+            updateMesaLabel();
+            showHumanCards();
+            msgHumanPlayer.setText("Jugaste " + card.getValue() + ". Total: " + table.getTotalValue());
 
-            // Quitar la carta jugada
-            humanPlayer.getCardsPlayer().remove(card);
+            // Iniciar turnos de máquinas
+            startMachineTurns();
 
-            // Robar una nueva si hay cartas
-            if (!game.getDeck().isEmpty()) {
-                Card newCard = game.getDeck().takeCard();
-                humanPlayer.addCardAt(columnIndex, newCard);
-                ImageView newImg = newCard.getCard();
-                setupCardClick(newImg, newCard, columnIndex);
-                gridPaneHumanPlayer.getChildren().removeIf(node -> GridPane.getColumnIndex(node) == columnIndex);
-                gridPaneHumanPlayer.add(newImg, columnIndex, 0);
-            } else {
-                gridPaneHumanPlayer.getChildren().removeIf(node -> GridPane.getColumnIndex(node) == columnIndex);
-            }
         });
     }
 
     /**
-     * Checks whether the human player can play at least one card
-     * without exceeding a total of 50 on the table.
-     *
-     * @return true if there is a playable card, false if not.
+     * Starts the turns for all active machine players using concurrent threads.
+     * Each machine plays automatically after a random delay (2–4 seconds).
      */
-    private boolean canPlayAnyCard() {
-        for (Card c : humanPlayer.getCardsPlayer()) {
-            if (counterTable + c.getNumericValue(counterTable) <= 50) {
-                return true; // tiene al menos una carta válida
-            }
+    private void startMachineTurns() {
+        for (int i = 0; i < machinePlayers.size(); i++) {
+            Player machine = machinePlayers.get(i);
+            int finalI = i;
+
+            MachineThread machineThread = new MachineThread(
+                    machine,
+                    game,
+                    () -> Platform.runLater(() -> {
+                        updateMesaLabel();
+                        showMachineCards();
+                        msgHumanPlayer.setText("Maquina " + (finalI + 1) +
+                                " Jugó. Total: " + table.getTotalValue());
+                        checkGameOver();
+                    })
+            );
+
+            machineThread.start();
         }
-        return false; // no puede jugar ninguna carta
     }
 
-    private int counterTable = 0;
     /**
-     * Updates the total value of all cards currently placed on the table.
-     * <p>
-     * When a player places a card on the table, this method adds its numeric value
-     * to the accumulated total and updates the {@code Label} displaying the current sum.
-     * <p>
-     * Note: Face cards (J, Q, K) have a negative value (-10) and will decrease the total.
-     *
-     * @param card the card that was just placed on the table.
+     * Updates the table total label with the current value of all cards on the table.
      */
-    private void updateMesaValue(Card card) {
-        int cardValue = card.getNumericValue(counterTable);
-        counterTable += cardValue;
-        labelTable.setText("Total mesa: " + counterTable);
+    private void updateMesaLabel() {
+        labelTable.setText("Total mesa: " + table.getTotalValue());
+    }
+
+    /**
+     * Checks whether the game is over (only one player remains).
+     * Displays a message when the game ends.
+     */
+    private void checkGameOver() {
+        int activePlayers = !humanEliminated ? 1 : 0;
+        for (Player p : machinePlayers) {
+            if (!p.getCardsPlayer().isEmpty()) activePlayers++;
+        }
+
+        if (activePlayers <= 1) {
+            msgHumanPlayer.setText("Fin del juego!");
+        }
     }
 }

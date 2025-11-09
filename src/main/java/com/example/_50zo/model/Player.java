@@ -1,6 +1,7 @@
 package com.example._50zo.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Player {
     private ArrayList<Card> cardsPlayer;
@@ -9,8 +10,9 @@ public class Player {
      * Constructs a new Player object with an empty hand of cards.
      */
     public Player(){
-        this.cardsPlayer = new ArrayList<Card>();
-    };
+
+        this.cardsPlayer = new ArrayList<>();
+    }
 
     /**
      * Adds a card to the player's hand.
@@ -18,6 +20,7 @@ public class Player {
      * @param card The card to be added to the player's hand.
      */
     public void addCard(Card card){
+
         cardsPlayer.add(card);
     }
 
@@ -27,6 +30,7 @@ public class Player {
      * @return An ArrayList containing all cards in the player's hand.
      */
     public ArrayList<Card> getCardsPlayer() {
+
         return cardsPlayer;
     }
 
@@ -36,6 +40,7 @@ public class Player {
      * @param index The index of the card to remove.
      */
     public void removeCard(int index) {
+
         cardsPlayer.remove(index);
     }
 
@@ -46,15 +51,67 @@ public class Player {
      * @return The card at the specified index in the player's hand.
      */
     public Card getCard(int index){
+
         return cardsPlayer.get(index);
     }
 
-    //Inserta una carta en una posicion especifica
+    /**
+     * Inserts a card at a specific position.
+     *
+     * @param index The index where the card will be inserted.
+     * @param card  The card to insert.
+     */
     public void addCardAt(int index, Card card) {
         if (index >= 0 && index <= cardsPlayer.size()) {
             cardsPlayer.add(index, card);
         } else {
             cardsPlayer.add(card);
         }
+    }
+
+    /**
+     * Checks if this player has any card that can be legally played
+     * according to the current total on the table.
+     *
+     * @param currentTotal current accumulated value on the table
+     * @return true if the player can play at least one card
+     */
+    public boolean hasPlayableCard(int currentTotal) {
+        for (Card card : cardsPlayer) {
+            int value = card.getNumericValue(currentTotal);
+            if (currentTotal + value <= 50) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns a list of cards that can be legally played according to the current total.
+     *
+     * @param currentTotal current accumulated value on the table
+     * @return list of playable cards
+     */
+    public List<Card> getPlayableCard(int currentTotal) {
+        List<Card> playable = new ArrayList<>();
+        for (Card card : cardsPlayer) {
+            int value = card.getNumericValue(currentTotal);
+            if (currentTotal + value <= 50) {
+                playable.add(card);
+            }
+        }
+        return playable;
+    }
+
+    /**
+     * String representation (for debugging or logs)
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Cartas del jugador: ");
+        for (Card c: cardsPlayer) {
+            sb.append(c.getValue()).append("");
+        }
+        return sb.toString().trim();
     }
 }
