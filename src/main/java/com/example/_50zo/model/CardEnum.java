@@ -1,7 +1,7 @@
 package com.example._50zo.model;
 
 public enum CardEnum {
-    HEART_A("unoCora.jpg"),
+    HEART_1("unoCora.jpg"),
     HEART_2("dosCorazon.jpg"),
     HEART_3("tresCorazon.jpg"),
     HEART_4("cuatroCora.jpg"),

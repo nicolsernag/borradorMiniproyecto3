@@ -1,7 +1,9 @@
 package com.example._50zo.controller;
 
 import com.example._50zo.model.*;
+import com.example._50zo.model.Threads.MachineThread;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -23,6 +25,12 @@ public class GameStage2Controller {
 
     @FXML
     private ImageView Table;
+
+    @FXML
+    private Label labelTable;
+
+    @FXML
+    private Label msgHumanPlayer;
 
     @FXML
     private ImageView Deck;
@@ -55,9 +63,7 @@ public class GameStage2Controller {
 
     public void initGame() {
         initVariables();
-        humanPlayer = new Player();
         createMachinePlayers();
-        deck = new Deck();
         deck.shuffle();
 
         dealCard();
@@ -99,6 +105,8 @@ public class GameStage2Controller {
         table.addCardOnTheTable(card);
         Card firstCard = table.getCurrentCardOnTheTable();
         Table.setImage(firstCard.getImage());
+        counterTable = firstCard.getNumericValue(counterTable);
+        labelTable.setText("Total mesa: " + counterTable);
     }
 
 
@@ -130,38 +138,84 @@ public class GameStage2Controller {
         }
     }
 
+    private boolean humanEliminated = false;
+
     /**
      * Asigna el evento de clic a una carta en la posición dada.
      */
     private void setupCardClick(ImageView img, Card card, int columnIndex) {
         img.setOnMouseClicked(event -> {
-            // El jugador pone la carta sobre la mesa
+            if (humanEliminated) {
+                msgHumanPlayer.setText("Has sido eliminado");
+                return;
+            }
+
+            int cardValue = card.getNumericValue(counterTable);
+            int possibleTotal = counterTable + cardValue;
+
+            // Verificar si al jugar la carta se pasaría de 50
+            if (possibleTotal > 50) {
+                msgHumanPlayer.setText("Esta carta excede el límite de 50.");
+
+                // Comprobar si el jugador tiene alguna carta jugable
+                if (!canPlayAnyCard()) {
+                    humanEliminated = true;
+                    msgHumanPlayer.setText("No puedes jugar ninguna carta. Has sido eliminado del juego.");
+                }
+                return;
+            }
+
+            // Juega la carta normalmente
             game.playCard(humanPlayer, card);
             Table.setImage(card.getImage());
+            updateMesaValue(card);
 
-            // Quitar la carta jugada de la mano
+            // Quitar la carta jugada
             humanPlayer.getCardsPlayer().remove(card);
 
-            // Si el mazo tiene cartas, tomar una nueva
+            // Robar una nueva si hay cartas
             if (!game.getDeck().isEmpty()) {
                 Card newCard = game.getDeck().takeCard();
                 humanPlayer.addCardAt(columnIndex, newCard);
-
                 ImageView newImg = newCard.getCard();
-                setupCardClick(newImg, newCard, columnIndex);//evento recursivo para la nueva carta
-
-                // Reemplazar visualmente solo esa posición
-                gridPaneHumanPlayer.getChildren().removeIf(
-                        node -> GridPane.getColumnIndex(node) == columnIndex
-                );
+                setupCardClick(newImg, newCard, columnIndex);
+                gridPaneHumanPlayer.getChildren().removeIf(node -> GridPane.getColumnIndex(node) == columnIndex);
                 gridPaneHumanPlayer.add(newImg, columnIndex, 0);
-
             } else {
-                // Si no hay cartas, quitar visualmente la carta jugada
-                gridPaneHumanPlayer.getChildren().removeIf(
-                        node -> GridPane.getColumnIndex(node) == columnIndex
-                );
+                gridPaneHumanPlayer.getChildren().removeIf(node -> GridPane.getColumnIndex(node) == columnIndex);
             }
         });
+    }
+
+    /**
+     * Checks whether the human player can play at least one card
+     * without exceeding a total of 50 on the table.
+     *
+     * @return true if there is a playable card, false if not.
+     */
+    private boolean canPlayAnyCard() {
+        for (Card c : humanPlayer.getCardsPlayer()) {
+            if (counterTable + c.getNumericValue(counterTable) <= 50) {
+                return true; // tiene al menos una carta válida
+            }
+        }
+        return false; // no puede jugar ninguna carta
+    }
+
+    private int counterTable = 0;
+    /**
+     * Updates the total value of all cards currently placed on the table.
+     * <p>
+     * When a player places a card on the table, this method adds its numeric value
+     * to the accumulated total and updates the {@code Label} displaying the current sum.
+     * <p>
+     * Note: Face cards (J, Q, K) have a negative value (-10) and will decrease the total.
+     *
+     * @param card the card that was just placed on the table.
+     */
+    private void updateMesaValue(Card card) {
+        int cardValue = card.getNumericValue(counterTable);
+        counterTable += cardValue;
+        labelTable.setText("Total mesa: " + counterTable);
     }
 }
