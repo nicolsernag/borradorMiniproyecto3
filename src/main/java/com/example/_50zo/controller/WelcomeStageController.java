@@ -1,6 +1,7 @@
 package com.example._50zo.controller;
 
 import com.example._50zo.view.GameStage2;
+import com.example._50zo.view.WelcomeStage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -19,6 +20,7 @@ public class WelcomeStageController {
 
         try{
             GameStage2 game = GameStage2.getInstance();
+            WelcomeStage.deleteInstance();
             game.getController().setNumMachinePlayers(numMachinePlayers);
             game.getController().initGame();
         } catch (Exception e) {
