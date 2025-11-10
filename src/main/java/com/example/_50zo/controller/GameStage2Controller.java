@@ -2,6 +2,8 @@ package com.example._50zo.controller;
 
 import com.example._50zo.model.*;
 import com.example._50zo.model.Threads.MachineThread;
+import com.example._50zo.view.GameStage2;
+import com.example._50zo.view.ThirdStage;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -9,6 +11,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +36,8 @@ public class GameStage2Controller {
 
     @FXML private Label labelTable;
     @FXML private Label msgHumanPlayer;
+    @FXML private Label newPlayerTurn;
+    @FXML private Label eliminatedMachine;
 
 
     private Deck deck;
@@ -91,6 +96,7 @@ public class GameStage2Controller {
         showHumanCards();
         showMachineCards();
         msgHumanPlayer.setText("Tu turno. Juega una carta.");
+        newPlayerTurn.setText("");
 
     }
 
@@ -194,6 +200,14 @@ public class GameStage2Controller {
                 if (!humanPlayer.hasPlayableCard(table.getTotalValue())) {
                     humanEliminated = true;
                     msgHumanPlayer.setText("No puedes jugar ninguna carta. Eliminado.");
+                    try{
+                        ThirdStage victory = ThirdStage.getInstance();
+                        victory.show();
+                        GameStage2.deleteInstance();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                     checkGameOver();
                 }
                 return;
@@ -216,26 +230,46 @@ public class GameStage2Controller {
      * Each machine plays automatically after a random delay (2–4 seconds).
      */
     private void startMachineTurns() {
-        for (int i = 0; i < machinePlayers.size(); i++) {
-            Player machine = machinePlayers.get(i);
-            int finalI = i;
+        newPlayerTurn.setText("");
+        new Thread (() -> {
+            for (int i = 0; i < machinePlayers.size(); i++) {
+                Player machine = machinePlayers.get(i);
+                int finalI = i;
 
-            MachineThread machineThread = new MachineThread(
-                    machine,
-                    game,
-                    () -> Platform.runLater(() -> {
-                        updateMesaLabel();
-                        showMachineCards();
-                        updatePlayedCardImage();
-                        msgHumanPlayer.setText("Maquina " + (finalI + 1) +
-                                " Jugó. Total: " + table.getTotalValue() + "\n" + "Tu turno, juega una carta.");
-                        checkGameOver();
-                    })
-            );
+                Runnable eliminatedMachinePlayer = () -> Platform.runLater(() -> {
+                    eliminatedMachine.setText("¡Máquina " + (finalI + 1) + " ha sido eliminada!");
+                });
 
-            machineThread.start();
+                MachineThread machineThread = new MachineThread(
+                        machine,
+                        game,
+                        () -> Platform.runLater(() -> {
+                            updateMesaLabel();
+                            showMachineCards();
+                            updatePlayedCardImage();
+                            msgHumanPlayer.setText("Maquina " + (finalI + 1) +
+                                    " Jugó. Total: " + table.getTotalValue());
+                            checkGameOver();
+                        }),
+                        finalI,
+                        eliminatedMachinePlayer
+                );
+                machineThread.start();
+                try {
+                    machineThread.join();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;}
+                }
+
+                Platform.runLater(() -> {
+                    newPlayerTurn.setText("Es tu turno. Juega una carta");
+                });
+
+            }).start();
         }
-    }
+
+
 //NEW CHANGES
     private void updatePlayedCardImage() {
         Card lastCard = game.getTable().getCurrentCardOnTheTable();
@@ -276,6 +310,15 @@ public class GameStage2Controller {
 
         if (activePlayers <= 1) {
             msgHumanPlayer.setText("Fin del juego!");
+            try{
+                ThirdStage victory = ThirdStage.getInstance();
+                victory.show();
+                GameStage2.deleteInstance();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         }
     }
-}
+

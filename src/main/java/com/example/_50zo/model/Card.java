@@ -3,7 +3,7 @@ package com.example._50zo.model;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class Card{
+public class Card {
     private String url;
     private String value;
     private Image image;
@@ -16,7 +16,7 @@ public class Card{
         this.cardImageView = createCardImageView();
     }
 
-    public String getURL(){
+    public String getURL() {
         return url;
     }
 
@@ -64,30 +64,43 @@ public class Card{
      * @return the numeric value of the card
      */
     public int getNumericValue(int currentTotal) {
-        switch (this.value) {
-            case "A":
-                return (currentTotal + 10 <= 50) ? 10 : 1;// o 10 según tus reglas
-            case "2": return 2;
-            case "3": return 3;
-            case "4": return 4;
-            case "5": return 5;
-            case "6": return 6;
-            case "7": return 7;
-            case "8": return 8;
-            case "9": return 0;
-            case "10": return 10;
-            case "J":
-            case "Q":
-            case "K":
-                return -10;
-            case "0":
-                return 0;
-            default:
-                try {
-                    return Integer.parseInt(value);
-                } catch (NumberFormatException e) {
+        if (this.value == null) {
+            System.err.println("Advertencia: El valor de la carta es nulo. Devolviendo 0.");
+            return 0;}
+            switch (this.value) {
+                case "A":
+                    return (currentTotal + 10 <= 50) ? 10 : 1;// o 10 según tus reglas
+                case "2":
+                    return 2;
+                case "3":
+                    return 3;
+                case "4":
+                    return 4;
+                case "5":
+                    return 5;
+                case "6":
+                    return 6;
+                case "7":
+                    return 7;
+                case "8":
+                    return 8;
+                case "9":
                     return 0;
-                }
+                case "10":
+                    return 10;
+                case "J":
+                case "Q":
+                case "K":
+                    return -10;
+                case "0":
+                    return 0;
+                default:
+                    try {
+                        return Integer.parseInt(value);
+                    } catch (NumberFormatException e) {
+                        return 0;
+                    }
+            }
         }
     }
-}
+

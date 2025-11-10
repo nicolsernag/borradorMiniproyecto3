@@ -18,6 +18,8 @@ import com.example._50zo.model.Player;
 public class MachineThread extends Thread{
     /** The machine player controlled by this thread. */
     private final Player machinePlayer;
+    private final int playerIndex;
+    private final Runnable eliminateMachinePlayer;
 
     /** The main game logic controller. */
     private final Game50 game;
@@ -33,10 +35,12 @@ public class MachineThread extends Thread{
      * @param updateUI      a {@link Runnable} executed on the JavaFX Application Thread
      *                      to safely update the interface after a play
      */
-    public MachineThread(Player machinePlayer, Game50 game, Runnable updateUI) {
+    public MachineThread(Player machinePlayer, Game50 game, Runnable updateUI, int index, Runnable eliminateMachinePlayer) {
         this.machinePlayer = machinePlayer;
         this.game = game;
         this.updateUI = updateUI;
+        this.playerIndex = index;
+        this.eliminateMachinePlayer = eliminateMachinePlayer;
     }
 
     /**
@@ -66,6 +70,9 @@ public class MachineThread extends Thread{
             } else {
                 // No valid cards: eliminate player
                 game.eliminatePlayer(machinePlayer);
+                if (eliminateMachinePlayer != null) {
+                    eliminateMachinePlayer.run();
+                }
             }
 
             // Update the UI on the JavaFX Application Thread

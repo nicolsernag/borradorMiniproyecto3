@@ -70,5 +70,15 @@
          <font>
             <Font name="Arial Rounded MT Bold" size="12.0" />
          </font></Label>
+      <Label fx:id="newPlayerTurn" layoutX="387.0" layoutY="422.0" text="Label" textFill="WHITE">
+         <font>
+            <Font name="Arial Rounded MT Bold" size="12.0" />
+         </font>
+      </Label>
+      <Label fx:id="eliminatedMachine" layoutX="239.0" layoutY="141.0" textFill="WHITE">
+         <font>
+            <Font name="Arial Rounded MT Bold" size="12.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

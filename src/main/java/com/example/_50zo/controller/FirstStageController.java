@@ -19,7 +19,7 @@ public class FirstStageController {
             FirstStage.deleteInstance();
 
         } catch (Exception e) {
-            System.err.println("❌ Error al abrir la pantalla de bienvenida: " + e.getMessage());
+            System.err.println("Error al abrir la pantalla de bienvenida: " + e.getMessage());
             e.printStackTrace();
         }
     }

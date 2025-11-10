@@ -4,7 +4,7 @@ module com.example._50zo {
     requires javafx.graphics;
     requires javafx.base;
     requires java.desktop;
-
+    requires com.example._50zo;
 
 
     opens com.example._50zo to javafx.fxml;

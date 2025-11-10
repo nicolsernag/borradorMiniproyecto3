@@ -14,7 +14,7 @@ public enum CardEnum {
     HEART_J("j-corazon.png"),
     HEART_Q("q-corazon.png"),
     HEART_K("k-corazon.png"),
-    SPADE_A("as-picas.png"),
+    SPADE_1("as-picas.png"),
     SPADE_2("2-picas.png"),
     SPADE_3("3-picas.png"),
     SPADE_4("4-picas.png"),
