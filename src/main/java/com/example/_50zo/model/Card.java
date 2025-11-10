@@ -16,6 +16,10 @@ public class Card{
         this.cardImageView = createCardImageView();
     }
 
+    public String getURL(){
+        return url;
+    }
+
 
     private ImageView createCardImageView() {
         ImageView card = new ImageView(this.image);

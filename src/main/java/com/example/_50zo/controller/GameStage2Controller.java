@@ -226,13 +226,34 @@ public class GameStage2Controller {
                     () -> Platform.runLater(() -> {
                         updateMesaLabel();
                         showMachineCards();
+                        updatePlayedCardImage();
                         msgHumanPlayer.setText("Maquina " + (finalI + 1) +
-                                " Jugó. Total: " + table.getTotalValue());
+                                " Jugó. Total: " + table.getTotalValue() + "\n" + "Tu turno, juega una carta.");
                         checkGameOver();
                     })
             );
 
             machineThread.start();
+        }
+    }
+//NEW CHANGES
+    private void updatePlayedCardImage() {
+        Card lastCard = game.getTable().getCurrentCardOnTheTable();
+
+        if (lastCard != null) {
+            String imagePath = lastCard.getURL();
+
+            java.net.URL imageUrl = getClass().getResource(imagePath);
+
+            if (imageUrl != null) {
+                try {
+                    String urlString = imageUrl.toExternalForm();
+                    Image cardImage = new Image(urlString);
+                    Table.setImage(cardImage);
+                } catch (Exception e) {
+                    System.err.println("ERROR: La imagen no se encontró. Revisa la ruta: " + imagePath + e.getMessage());
+                }
+            }
         }
     }
 
