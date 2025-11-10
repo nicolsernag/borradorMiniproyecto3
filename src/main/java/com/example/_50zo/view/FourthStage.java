@@ -12,7 +12,7 @@ import java.io.IOException;
 public class FourthStage extends Stage {
     private ThirdStageController controller;
 
-    private ThirdStage() throws IOException {
+    private FourthStage() throws IOException {
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("/com/example/_50zo/thirdview.fxml"));
         Parent root= loader.load();
@@ -34,20 +34,22 @@ public class FourthStage extends Stage {
 
 
     private static class Holder{
-        private static ThirdStage INSTANCE=null;
+        private static FourthStage INSTANCE=null;
     }
 
 
 
-    public static ThirdStage getInstance() throws IOException{
-        ThirdStage.Holder.INSTANCE = ThirdStage.Holder.INSTANCE != null ?
-                ThirdStage.Holder.INSTANCE : new ThirdStage();
-        return ThirdStage.Holder.INSTANCE;
+    public static FourthStage getInstance() throws IOException{
+        Holder.INSTANCE = Holder.INSTANCE != null ? Holder.INSTANCE : new FourthStage();
+        return Holder.INSTANCE;
     }
 
 
     public static void deleteInstance(){
-        ThirdStage.Holder.INSTANCE.close();
+        if (Holder.INSTANCE != null) {
+            Holder.INSTANCE.close();
+            Holder.INSTANCE = null;
+        }
     }
 }
 
