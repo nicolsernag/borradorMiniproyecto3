@@ -2,6 +2,7 @@ package com.example._50zo.controller;
 
 import com.example._50zo.model.*;
 import com.example._50zo.model.Threads.MachineThread;
+import com.example._50zo.model.exceptions.InvalidMoveException;
 import com.example._50zo.view.GameStage2;
 import com.example._50zo.view.ThirdStage;
 import javafx.application.Platform;
@@ -213,7 +214,11 @@ public class GameStage2Controller {
                 return;
             }
 
-            game.playCard(humanPlayer, card);
+            try {
+                game.playCard(humanPlayer, card);
+            } catch (InvalidMoveException e) {
+                System.out.println(e.getMessage());
+            }
             Table.setImage(card.getImage());
             updateMesaLabel();
             showHumanCards();
@@ -235,6 +240,7 @@ public class GameStage2Controller {
             for (int i = 0; i < machinePlayers.size(); i++) {
                 Player machine = machinePlayers.get(i);
                 int finalI = i;
+
 
                 Runnable eliminatedMachinePlayer = () -> Platform.runLater(() -> {
                     eliminatedMachine.setText("¡Máquina " + (finalI + 1) + " ha sido eliminada!");
@@ -271,6 +277,16 @@ public class GameStage2Controller {
 
 
 //NEW CHANGES
+    /**
+     * Updates the image displayed on the game table to reflect the most recently played card.
+     * <p>
+     * This method retrieves the last card placed on the table from the {@code Game50} instance,
+     * obtains its image path, and updates the table's image display accordingly.
+     * If the image resource cannot be found or loaded, an error message is printed to the console.
+     * <p>
+     * The method handles potential exceptions gracefully to prevent the UI from crashing
+     * if the image path is incorrect or the resource is missing.
+     */
     private void updatePlayedCardImage() {
         Card lastCard = game.getTable().getCurrentCardOnTheTable();
 
@@ -318,7 +334,6 @@ public class GameStage2Controller {
                 e.printStackTrace();
             }
         }
-
-        }
     }
+}
 
