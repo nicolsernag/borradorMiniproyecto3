@@ -3,12 +3,24 @@ package com.example._50zo.model;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+/**
+ * Represents a playing card used in the game.
+ * Each card has an image, a value, and a corresponding ImageView
+ * for graphical display within a JavaFX interface.
+ */
 public class Card {
     private String url;
     private String value;
     private Image image;
     private ImageView cardImageView;
 
+    /**
+     * Constructs a new Card with the specified image URL and value.
+     * The card image is loaded from the given URL, and an ImageView is created for display.
+     *
+     * @param url   the relative path to the card image resource
+     * @param value the value or label of the card (e.g., "5", etc.)
+     */
     public Card(String url, String value) {
         this.url = url;
         this.value = value;
@@ -16,11 +28,21 @@ public class Card {
         this.cardImageView = createCardImageView();
     }
 
+    /**
+     * Returns the URL of the card image resource.
+     *
+     * @return the URL of the card image
+     */
     public String getURL() {
         return url;
     }
 
-
+    /**
+     * Creates and configures an ImageView for this card’s image.
+     * The ImageView is set with fixed dimensions and a predefined Y position.
+     *
+     * @return a configured ImageView representing this card
+     */
     private ImageView createCardImageView() {
         ImageView card = new ImageView(this.image);
         card.setY(426);
@@ -29,7 +51,12 @@ public class Card {
         return card;
     }
 
-
+    /**
+     * Returns the ImageView representation of this card.
+     * If the image or ImageView is not initialized, they are reloaded automatically.
+     *
+     * @return the ImageView associated with this card
+     */
     public ImageView getCard() {
         if (cardImageView == null || image == null) {
             this.image = new Image(String.valueOf(getClass().getResource(url)));
@@ -38,7 +65,12 @@ public class Card {
         return cardImageView;
     }
 
-
+    /**
+     * Returns the Image object representing this card.
+     * If the image is not initialized, it is loaded from the URL.
+     *
+     * @return the Image of this card
+     */
     public Image getImage() {
         if (image == null) {
             this.image = new Image(String.valueOf(getClass().getResource(url)));
@@ -46,9 +78,12 @@ public class Card {
         return image;
     }
 
-
+    /**
+     * Returns the logical value of this card (e.g., "7", "Ace", etc.).
+     *
+     * @return the value of the card
+     */
     public String getValue() {
-
         return value;
     }
 
@@ -69,7 +104,7 @@ public class Card {
             return 0;}
             switch (this.value) {
                 case "A":
-                    return (currentTotal + 10 <= 50) ? 10 : 1;// o 10 según tus reglas
+                    return (currentTotal + 10 <= 50) ? 10 : 1;
                 case "2":
                     return 2;
                 case "3":

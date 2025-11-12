@@ -3,6 +3,11 @@ package com.example._50zo.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a player in the "Cincuentazo" game.
+ * The class also provides methods to check which cards can be legally played
+ * according to the current total on the table.
+ */
 public class Player {
     private ArrayList<Card> cardsPlayer;
 
@@ -74,7 +79,7 @@ public class Player {
      * according to the current total on the table.
      *
      * @param currentTotal current accumulated value on the table
-     * @return true if the player can play at least one card
+     * @return true if the player can play at least one card; {@code false} otherwise
      */
     public boolean hasPlayableCard(int currentTotal) {
         for (Card card : cardsPlayer) {
@@ -105,6 +110,7 @@ public class Player {
 
     /**
      * String representation (for debugging or logs)
+     * @return a string containing the values of all cards in the player's hand
      */
     @Override
     public String toString() {

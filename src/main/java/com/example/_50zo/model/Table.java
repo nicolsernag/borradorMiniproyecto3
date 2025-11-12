@@ -3,6 +3,13 @@ package com.example._50zo.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents the table in the "Cincuentazo" (Game50) card game.
+ * <p>
+ * The table keeps track of all cards that have been played during the game.
+ * It provides methods to add, remove, and retrieve cards, as well as to
+ * calculate the total accumulated value of all cards currently on the table.
+ */
 public class Table {
     private ArrayList<Card> cardsTable;
 
@@ -10,7 +17,6 @@ public class Table {
      * Constructs a new Table object with no cards on it.
      */
     public Table(){
-
         this.cardsTable = new ArrayList<Card>();
     }
 
@@ -20,7 +26,6 @@ public class Table {
      * @param card The card to be added to the table.
      */
     public void addCardOnTheTable(Card card){
-
         this.cardsTable.add(card);
     }
 

@@ -4,6 +4,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
+/**
+ * Represents the deck of cards used in the Game50.
+ * <p>
+ * This class manages a stack of {@link Card} objects that can be shuffled,
+ * drawn, or refilled from the table. It also supports adding cards back
+ * to the bottom of the deck, maintaining the game’s flow when the deck runs out.
+ */
 public class Deck {
     private Stack<Card> deckOfCards;
 
@@ -27,6 +34,14 @@ public class Deck {
         Collections.shuffle(deckOfCards);
     }
 
+    /**
+     * Returns the corresponding display value of a card based on its name.
+     * For example, cards ending in "1" are labeled "A", and those ending in "J", "Q", or "K"
+     * correspond to face cards.
+     *
+     * @param name the name of the card from {@link CardEnum}
+     * @return the value symbol (e.g., "A", "2", "10", "K") or {@code null} if not found
+     */
     private String getCardValue(String name) {
         if (name.endsWith("9")){
             return "9";
@@ -72,8 +87,14 @@ public class Deck {
         return deckOfCards.pop();
     }
 
+    /**
+     * Shuffles the deck of cards randomly.
+     * <p>
+     * This method uses {@link Collections#shuffle(List)} to reorder
+     * the elements in {@code deckOfCards} in a random sequence,
+     * ensuring a fair and unpredictable distribution of cards.
+     */
     public void shuffle(){
-
         Collections.shuffle(deckOfCards);
     }
 
@@ -88,6 +109,7 @@ public class Deck {
 
     /**
      * Refills the deck from the table (except the last card).
+     *  @param cardsFromTable the list of cards retrieved from the table to refill the deck
      */
     public void refillFromTable(List<Card> cardsFromTable) {
         if(cardsFromTable == null || cardsFromTable.isEmpty()) return;
@@ -99,6 +121,7 @@ public class Deck {
 
     /**
      * Adds a single card to the bottom of the deck.
+     * @param card the card to be inserted at the bottom
      */
     public void addToBottom(Card card){
         if(card != null){
@@ -106,6 +129,12 @@ public class Deck {
         }
     }
 
+    /**
+     * Adds a list of cards to the bottom of the deck, preserving their order.
+     * The last card in the list becomes the bottommost card in the deck.
+     *
+     * @param cards the list of cards to be added to the bottom of the deck
+     */
     public void addAllToBottom(List<Card> cards){
         if(cards != null && !cards.isEmpty()){
             for ( int i = cards.size() - 1; i >= 0; i-- ) {

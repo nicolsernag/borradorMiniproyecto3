@@ -1,5 +1,15 @@
 package com.example._50zo.model;
 
+/**
+ * Enumeration representing all possible cards in the "Cincuentazo" (Game50) deck.
+ * <p>
+ * Each constant in this enum corresponds to a specific playing card, including
+ * all ranks (Ace through King) and suits (Hearts, Spades, Diamonds, Clubs),
+ * as well as the face-down card used for hidden or undealt cards.
+ * <p>
+ * Each card is associated with an image file path that points to its graphical
+ * representation used in the game's UI.
+ */
 public enum CardEnum {
     HEART_1("as-corazon.png"),
     HEART_2("2-corazon.png"),

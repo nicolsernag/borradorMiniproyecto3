@@ -11,11 +11,9 @@ public class FifthStageController {
     @FXML
     private void getBackTwo(ActionEvent event) throws IOException {
         try {
-            // Pasa a la pantalla de selección de jugadores
             FirstStage firstStage = FirstStage.getInstance();
             firstStage.show();
 
-            // Cierra la pantalla actual
             FifthStage.deleteInstance();
 
         } catch (Exception e) {

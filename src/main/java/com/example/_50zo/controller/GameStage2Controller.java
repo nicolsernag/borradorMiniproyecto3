@@ -2,14 +2,14 @@ package com.example._50zo.controller;
 
 import com.example._50zo.model.*;
 import com.example._50zo.model.Threads.MachineThread;
+import com.example._50zo.model.Threads.TimerThread;
+import com.example._50zo.model.exceptions.InvalidMoveException;
 import com.example._50zo.view.FifthStage;
-import com.example._50zo.view.FourthStage;
 import com.example._50zo.view.GameStage2;
 import com.example._50zo.view.ThirdStage;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -29,6 +29,7 @@ import java.util.List;
 public class GameStage2Controller {
 
     private int numMachinePlayers; // valor que viene del menú
+    private TimerThread timerThread;
 
     @FXML private GridPane gridMachine1;
     @FXML private GridPane gridMachine2;
@@ -42,7 +43,7 @@ public class GameStage2Controller {
     @FXML private Label msgHumanPlayer;
     @FXML private Label newPlayerTurn;
     @FXML private Label eliminatedMachine;
-
+    @FXML private Label turnTimer;
 
 
     private Deck deck;
@@ -58,17 +59,6 @@ public class GameStage2Controller {
             getClass().getResourceAsStream(CardEnum.CARD_FACE_DOWN.getFilePath())
     );
 
-    @FXML
-    private void getOut(ActionEvent event) throws IOException {
-        // Close the victory window
-        GameStage2.deleteInstance();
-
-        // Open the main welcome screen
-        FifthStage.getInstance().getController();
-    }
-
-
-
     /**
      * Sets the number of machine players selected in the previous stage.
      *
@@ -77,6 +67,15 @@ public class GameStage2Controller {
     public void setNumMachinePlayers(int num) {
 
         this.numMachinePlayers = num;
+    }
+
+    @FXML
+    private void getOut(ActionEvent event) throws IOException {
+        // Close the victory window
+        GameStage2.deleteInstance();
+
+        // Open the main welcome screen
+        FifthStage.getInstance().getController();
     }
 
     /**
@@ -99,6 +98,7 @@ public class GameStage2Controller {
      *     <li>Deals the cards to all players</li>
      *     <li>Places the first card on the table</li>
      *     <li>Renders all visual elements</li>
+     *     <li>Starts the human player's turn timer</li>
      * </ul>
      */
     public void initGame() {
@@ -113,6 +113,10 @@ public class GameStage2Controller {
         showMachineCards();
         msgHumanPlayer.setText("Tu turno. Juega una carta.");
         newPlayerTurn.setText("");
+        timerThread = new TimerThread(this);
+        timerThread.start();
+
+
 
     }
 
@@ -217,7 +221,7 @@ public class GameStage2Controller {
                     humanEliminated = true;
                     msgHumanPlayer.setText("No puedes jugar ninguna carta. Eliminado.");
                     try{
-                        FourthStage victory = FourthStage.getInstance();
+                        ThirdStage victory = ThirdStage.getInstance();
                         victory.show();
                         GameStage2.deleteInstance();
                     } catch (IOException e) {
@@ -229,17 +233,53 @@ public class GameStage2Controller {
                 return;
             }
 
-            game.playCard(humanPlayer, card);
+            try {
+                game.playCard(humanPlayer, card);
+            } catch (InvalidMoveException e) {
+                System.out.println(e.getMessage());
+            }
+            //Stops the timer when the player plays
+            if (timerThread != null) {
+                timerThread.stopTimer();
+                timerThread = null;
+                turnTimer.setText("");
+            }
             Table.setImage(card.getImage());
             updateMesaLabel();
             showHumanCards();
             msgHumanPlayer.setText("Jugaste " + card.getValue() + ". Total: " + table.getTotalValue());
 
-            // Iniciar turnos de máquinas
+            // Start machine turns
             startMachineTurns();
 
         });
     }
+
+    /**
+     * Updates the turn timer label with the remaining seconds.
+     * @param seconds
+     */
+    public void updateTimerLabel(int seconds) {
+        turnTimer.setText("Tiempo restante: " + seconds + "s");
+    }
+
+    /**
+     * Handles the event when the human player's turn time expires.
+     * Displays a message and initiates the machine players' turns.
+     */
+    public void handleTimeExpired(){
+        msgHumanPlayer.setText("¡Perdiste el turno por tiempo!");
+        newPlayerTurn.setText("");
+
+        startMachineTurns();
+
+        if (turnTimer != null) {
+            turnTimer.setText("");
+        }
+
+
+    }
+
 
     /**
      * Starts the turns for all active machine players using concurrent threads.
@@ -251,6 +291,7 @@ public class GameStage2Controller {
             for (int i = 0; i < machinePlayers.size(); i++) {
                 Player machine = machinePlayers.get(i);
                 int finalI = i;
+
 
                 Runnable eliminatedMachinePlayer = () -> Platform.runLater(() -> {
                     eliminatedMachine.setText("¡Máquina " + (finalI + 1) + " ha sido eliminada!");
@@ -280,15 +321,26 @@ public class GameStage2Controller {
 
                 Platform.runLater(() -> {
                     newPlayerTurn.setText("Es tu turno. Juega una carta");
+                    //TIMER
+                    timerThread = new TimerThread(this);
+                    timerThread.start();
                 });
 
             }).start();
         }
 
+
+
     /**
-     * Updates the image of the last played card on the table.
+     * Updates the image displayed on the game table to reflect the most recently played card.
+     * <p>
+     * This method retrieves the last card placed on the table from the {@code Game50} instance,
+     * obtains its image path, and updates the table's image display accordingly.
+     * If the image resource cannot be found or loaded, an error message is printed to the console.
+     * <p>
+     * The method handles potential exceptions gracefully to prevent the UI from crashing
+     * if the image path is incorrect or the resource is missing.
      */
-//NEW CHANGES
     private void updatePlayedCardImage() {
         Card lastCard = game.getTable().getCurrentCardOnTheTable();
 
@@ -336,7 +388,6 @@ public class GameStage2Controller {
                 e.printStackTrace();
             }
         }
-
-        }
     }
+}
 
