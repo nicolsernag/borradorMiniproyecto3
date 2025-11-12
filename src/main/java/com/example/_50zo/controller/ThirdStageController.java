@@ -10,10 +10,22 @@ import javafx.scene.control.Label;
 
 import java.io.IOException;
 
+/**
+ * Controller class for the third stage of the application.
+ * This controller manages user interactions within the third stage,
+ * including navigating back to the first stage.
+ */
+
 public class ThirdStageController {
 
 
     @FXML
+    /**
+     * Handles the action when the "VOLVER" button is pressed.
+     * This method transitions the application back to the FirstStage.
+     * @param event
+     * @throws IOException
+     */
     private void getBack(ActionEvent event) throws IOException {
         ThirdStage.deleteInstance();
         FirstStage.getInstance();

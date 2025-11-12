@@ -285,7 +285,9 @@ public class GameStage2Controller {
             }).start();
         }
 
-
+    /**
+     * Updates the image of the last played card on the table.
+     */
 //NEW CHANGES
     private void updatePlayedCardImage() {
         Card lastCard = game.getTable().getCurrentCardOnTheTable();

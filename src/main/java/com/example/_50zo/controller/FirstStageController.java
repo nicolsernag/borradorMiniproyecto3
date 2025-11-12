@@ -7,9 +7,19 @@ import javafx.fxml.FXML;
 
 import java.io.IOException;
 
+/**
+ * Controller class for the first stage of the application.
+ * This controller manages user interactions within the first stage,
+ * including transitioning to the welcome stage.
+ */
 public class FirstStageController {
 
     @FXML
+    /**
+     * Handles the action when the "INICIAR" button is pressed.
+     * This method transitions the application to the WelcomeStage.
+     * @param event
+     */
     private void handlePlay(ActionEvent event) {
         try {
             // Pasa a la pantalla de selección de jugadores
