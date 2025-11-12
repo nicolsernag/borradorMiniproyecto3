@@ -54,7 +54,11 @@ public class WelcomeStage extends Stage {
     /**
      * Close the welcome window and delete its current instance.
      */
-    public static void deleteInstance(){
-        Holder.INSTANCE.close();
+    public static void deleteInstance() {
+        if (WelcomeStage.Holder.INSTANCE != null) {
+            WelcomeStage.Holder.INSTANCE.close();
+            WelcomeStage.Holder.INSTANCE = null;
+        }
     }
 }
+

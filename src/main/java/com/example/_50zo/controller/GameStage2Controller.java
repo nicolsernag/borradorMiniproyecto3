@@ -2,10 +2,14 @@ package com.example._50zo.controller;
 
 import com.example._50zo.model.*;
 import com.example._50zo.model.Threads.MachineThread;
+import com.example._50zo.view.FifthStage;
+import com.example._50zo.view.FourthStage;
 import com.example._50zo.view.GameStage2;
 import com.example._50zo.view.ThirdStage;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -40,6 +44,7 @@ public class GameStage2Controller {
     @FXML private Label eliminatedMachine;
 
 
+
     private Deck deck;
     private Table table;
     private Player humanPlayer;
@@ -52,6 +57,17 @@ public class GameStage2Controller {
     private final Image backCardImage = new Image(
             getClass().getResourceAsStream(CardEnum.CARD_FACE_DOWN.getFilePath())
     );
+
+    @FXML
+    private void getOut(ActionEvent event) throws IOException {
+        // Close the victory window
+        GameStage2.deleteInstance();
+
+        // Open the main welcome screen
+        FifthStage.getInstance().getController();
+    }
+
+
 
     /**
      * Sets the number of machine players selected in the previous stage.
@@ -201,7 +217,7 @@ public class GameStage2Controller {
                     humanEliminated = true;
                     msgHumanPlayer.setText("No puedes jugar ninguna carta. Eliminado.");
                     try{
-                        ThirdStage victory = ThirdStage.getInstance();
+                        FourthStage victory = FourthStage.getInstance();
                         victory.show();
                         GameStage2.deleteInstance();
                     } catch (IOException e) {

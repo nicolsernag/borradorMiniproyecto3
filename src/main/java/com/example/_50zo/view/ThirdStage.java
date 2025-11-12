@@ -49,6 +49,7 @@ public class ThirdStage extends Stage {
 
     public static void deleteInstance(){
         ThirdStage.Holder.INSTANCE.close();
+        ThirdStage.Holder.INSTANCE = null;
     }
 }
 

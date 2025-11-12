@@ -1,5 +1,6 @@
 package com.example._50zo.view;
 
+import com.example._50zo.controller.FifthStageController;
 import com.example._50zo.controller.FourthStageController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -9,12 +10,12 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class FourthStage extends Stage {
-    private FourthStageController controller;
+public class FifthStage extends Stage {
+    private FifthStageController controller;
 
-    private FourthStage() throws IOException {
+    private FifthStage() throws IOException {
         FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/com/example/_50zo/fourthview.fxml"));
+                getClass().getResource("/com/example/_50zo/fifthview.fxml"));
         Parent root= loader.load();
         controller= loader.getController();
         Scene scene = new Scene(root);
@@ -28,28 +29,27 @@ public class FourthStage extends Stage {
     }
 
 
-    public FourthStageController getController(){
+    public FifthStageController getController(){
         return controller;
     }
 
 
     private static class Holder{
-        private static FourthStage INSTANCE=null;
+        private static FifthStage INSTANCE=null;
     }
 
 
 
-    public static FourthStage getInstance() throws IOException{
-        FourthStage.Holder.INSTANCE = FourthStage.Holder.INSTANCE != null ?
-                FourthStage.Holder.INSTANCE : new FourthStage();
-        return FourthStage.Holder.INSTANCE;
+    public static FifthStage getInstance() throws IOException{
+        FifthStage.Holder.INSTANCE = FifthStage.Holder.INSTANCE != null ?
+                FifthStage.Holder.INSTANCE : new FifthStage();
+        return FifthStage.Holder.INSTANCE;
     }
 
 
     public static void deleteInstance(){
-        FourthStage.Holder.INSTANCE.close();
-        FourthStage.Holder.INSTANCE = null;
+        FifthStage.Holder.INSTANCE.close();
+        FifthStage.Holder.INSTANCE = null;
     }
+
 }
-
-

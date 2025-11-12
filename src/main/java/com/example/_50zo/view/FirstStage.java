@@ -46,13 +46,6 @@ public class FirstStage extends Stage {
         private static FirstStage INSTANCE=null;
     }
 
-    /**
-     * Get the unique instance of SudokuGameStage.
-     * If the instance does not exist, a new one is created; otherwise,
-     * the existing one is returned. This method ensures that there is onlyone main game window running.
-     * @return the single instance of SudokuGameStage.
-     * @throws IOException if an error occurs while creating a new instance.
-     */
     public static FirstStage getInstance() throws IOException{
         FirstStage.Holder.INSTANCE = FirstStage.Holder.INSTANCE != null ?
                 FirstStage.Holder.INSTANCE : new FirstStage();
@@ -66,6 +59,7 @@ public class FirstStage extends Stage {
      */
     public static void deleteInstance(){
         FirstStage.Holder.INSTANCE.close();
+        FirstStage.Holder.INSTANCE = null;
     }
 }
 

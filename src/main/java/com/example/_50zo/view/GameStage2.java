@@ -66,5 +66,6 @@ public class GameStage2 extends Stage {
      */
     public static void deleteInstance(){
         GameStage2.Holder.INSTANCE.close();
+        GameStage2.Holder.INSTANCE = null;
     }
 }
