@@ -110,6 +110,7 @@ public class GameStage2Controller {
     public void initGame() {
         initVariables();
         createMachinePlayers();
+        showDeckBack();
         deck.shuffle();
 
         game.setOnDeckRefilled(() -> Platform.runLater(() -> {
@@ -425,6 +426,25 @@ public class GameStage2Controller {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    //nico
+    public void showDeckBack() {
+        // Obtiene la ruta del reverso desde tu enum
+        String backUrl = CardEnum.CARD_FACE_DOWN.getFilePath();
+        java.net.URL imageUrl = getClass().getResource(backUrl);
+
+        if (imageUrl != null) {
+            Image backImage = new Image(imageUrl.toExternalForm());
+            Deck.setImage(backImage);
+
+            // Opcional: ajustar tamaño
+            Deck.setFitWidth(82);
+            Deck.setFitHeight(128);
+            Deck.setPreserveRatio(true);
+        } else {
+            System.err.println("No se encontró la imagen del reverso del mazo: " + backUrl);
         }
     }
 }
