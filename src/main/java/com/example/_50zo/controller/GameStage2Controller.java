@@ -5,6 +5,7 @@ import com.example._50zo.model.Threads.MachineThread;
 import com.example._50zo.model.Threads.TimerThread;
 import com.example._50zo.model.exceptions.InvalidMoveException;
 import com.example._50zo.view.FifthStage;
+import com.example._50zo.view.FourthStage;
 import com.example._50zo.view.GameStage2;
 import com.example._50zo.view.ThirdStage;
 import javafx.application.Platform;
@@ -30,6 +31,8 @@ public class GameStage2Controller {
 
     private int numMachinePlayers; // valor que viene del menú
     private TimerThread timerThread;
+    private boolean isMachineTurn = false; //evita desincronizacion
+    private boolean humanEliminated = false;
 
     @FXML private GridPane gridMachine1;
     @FXML private GridPane gridMachine2;
@@ -51,9 +54,8 @@ public class GameStage2Controller {
     private Player humanPlayer;
     private List<Player> machinePlayers = new ArrayList<>();
     private List<GridPane> machineGrids = new ArrayList<>();
-
     private Game50 game;
-    private boolean humanEliminated = false;
+
 
     private final Image backCardImage = new Image(
             getClass().getResourceAsStream(CardEnum.CARD_FACE_DOWN.getFilePath())
@@ -65,7 +67,6 @@ public class GameStage2Controller {
      * @param num number of machine opponents (1–3)
      */
     public void setNumMachinePlayers(int num) {
-
         this.numMachinePlayers = num;
     }
 
@@ -105,6 +106,16 @@ public class GameStage2Controller {
         initVariables();
         createMachinePlayers();
         deck.shuffle();
+
+        game.setOnDeckRefilled(() -> Platform.runLater(() -> {
+            msgHumanPlayer.setText("El mazo se acabó. Se barajaron las cartas.");
+            new Thread(() -> {
+                try {
+                    Thread.sleep(3000);
+                    Platform.runLater(() -> msgHumanPlayer.setText(""));
+                } catch (InterruptedException e) {}
+            }).start();
+        }));
 
         dealCards();
         dealCardTable();
@@ -210,6 +221,7 @@ public class GameStage2Controller {
      */
     private void setupCardClick(ImageView img, Card card, int columnIndex) {
         img.setOnMouseClicked(event -> {
+            if(isMachineTurn) return;
             if (humanEliminated) {
                 msgHumanPlayer.setText("Has sido eliminado");
                 return;
@@ -220,19 +232,17 @@ public class GameStage2Controller {
                 if (!humanPlayer.hasPlayableCard(table.getTotalValue())) {
                     humanEliminated = true;
                     msgHumanPlayer.setText("No puedes jugar ninguna carta. Eliminado.");
-                    try{
-                        ThirdStage victory = ThirdStage.getInstance();
-                        victory.show();
+                    try {
+                        FourthStage loseStage = FourthStage.getInstance();
+                        loseStage.show();
                         GameStage2.deleteInstance();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
-                    checkGameOver();
+                    return;
                 }
                 return;
             }
-
             try {
                 game.playCard(humanPlayer, card);
             } catch (InvalidMoveException e) {
@@ -268,16 +278,12 @@ public class GameStage2Controller {
      * Displays a message and initiates the machine players' turns.
      */
     public void handleTimeExpired(){
+        if (isMachineTurn) return;
         msgHumanPlayer.setText("¡Perdiste el turno por tiempo!");
         newPlayerTurn.setText("");
 
         startMachineTurns();
-
-        if (turnTimer != null) {
-            turnTimer.setText("");
-        }
-
-
+        turnTimer.setText("");
     }
 
 
@@ -285,17 +291,29 @@ public class GameStage2Controller {
      * Starts the turns for all active machine players using concurrent threads.
      * Each machine plays automatically after a random delay (2–4 seconds).
      */
-    private void startMachineTurns() {
+    private synchronized void startMachineTurns() {
+        if(isMachineTurn) return;
+        isMachineTurn = true;
         newPlayerTurn.setText("");
+        msgHumanPlayer.setText("Turno de las máquinas...");
+
+        //detiene el temporizador del jugador humano
+        if(timerThread != null) {
+            timerThread.stopTimer();
+            timerThread = null;
+            turnTimer.setText("");
+        }
         new Thread (() -> {
             for (int i = 0; i < machinePlayers.size(); i++) {
                 Player machine = machinePlayers.get(i);
+                if (machine.getCardsPlayer().isEmpty()) continue;
+
                 int finalI = i;
 
 
-                Runnable eliminatedMachinePlayer = () -> Platform.runLater(() -> {
-                    eliminatedMachine.setText("¡Máquina " + (finalI + 1) + " ha sido eliminada!");
-                });
+                Runnable eliminatedMachinePlayer = () -> Platform.runLater(() ->
+                        eliminatedMachine.setText("¡Máquina " + (finalI + 1) + " ha sido eliminada!")
+                );
 
                 MachineThread machineThread = new MachineThread(
                         machine,
@@ -316,18 +334,26 @@ public class GameStage2Controller {
                     machineThread.join();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                    return;}
+                    return;
                 }
+            }
 
-                Platform.runLater(() -> {
-                    newPlayerTurn.setText("Es tu turno. Juega una carta");
-                    //TIMER
-                    timerThread = new TimerThread(this);
-                    timerThread.start();
-                });
+            try {
+                Thread.sleep(1200);
+            } catch (InterruptedException e) {}
 
-            }).start();
-        }
+            Platform.runLater(() -> {
+                isMachineTurn = false;
+                eliminatedMachine.setText("");
+                msgHumanPlayer.setText("Tu turno. Juega una carta.");
+                newPlayerTurn.setText("Es tu turno. Juega una carta");
+
+                timerThread = new TimerThread(this);
+                timerThread.start();
+            });
+
+        }).start();
+    }
 
 
 
@@ -378,7 +404,7 @@ public class GameStage2Controller {
             if (!p.getCardsPlayer().isEmpty()) activePlayers++;
         }
 
-        if (activePlayers <= 1) {
+        if (activePlayers <= 1 && !humanEliminated) {
             msgHumanPlayer.setText("Fin del juego!");
             try{
                 ThirdStage victory = ThirdStage.getInstance();

@@ -16,6 +16,8 @@ public class Game50 {
     private Deck deck;
     private Table table;
 
+    private Runnable onDeckRefilled;
+
     /**
      * Constructs a new Game50 instance.
      *
@@ -27,6 +29,13 @@ public class Game50 {
         this.humanPlayer = humanPlayer;
         this.deck = deck;
         this.table = table;
+    }
+
+    /**
+     * Sets a callback to run when the deck is refilled from the table.
+     */
+    public void setOnDeckRefilled(Runnable onDeckRefilled) {
+        this.onDeckRefilled = onDeckRefilled;
     }
 
     /**
@@ -71,6 +80,10 @@ public class Game50 {
         } else{
             List<Card> cardsFromTable = table.removeAllExceptLast();
             deck.refillFromTable(cardsFromTable);
+            if (onDeckRefilled != null) {
+                onDeckRefilled.run();
+            }
+
             if(!deck.isEmpty()){
                 player.addCard(deck.takeCard());
             }
