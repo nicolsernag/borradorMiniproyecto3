@@ -59,19 +59,20 @@ public class MachineThread extends Thread{
             int delay = 2000 + (int) (Math.random() * 2000);
             Thread.sleep(delay);
 
-            // Attempt to play a valid card
-            if (game.hasPlayableCard(machinePlayer)) {
-                for (Card card : machinePlayer.getCardsPlayer()) {
-                    if (game.canPlayCard(card)) {
-                        game.playCard(machinePlayer, card);
-                        break;
+            synchronized (game){
+                if (game.hasPlayableCard(machinePlayer)) {
+                    for (Card card : machinePlayer.getCardsPlayer()) {
+                        if (game.canPlayCard(card)) {
+                            game.playCard(machinePlayer, card);
+                            break;
+                        }
                     }
-                }
-            } else {
-                // No valid cards: eliminate player
-                game.eliminatePlayer(machinePlayer);
-                if (eliminateMachinePlayer != null) {
-                    eliminateMachinePlayer.run();
+                } else {
+                    // No valid cards: eliminate player
+                    game.eliminatePlayer(machinePlayer);
+                    if (eliminateMachinePlayer != null) {
+                        eliminateMachinePlayer.run();
+                    }
                 }
             }
 
