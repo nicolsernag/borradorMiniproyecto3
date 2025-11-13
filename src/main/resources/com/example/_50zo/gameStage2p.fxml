@@ -13,7 +13,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="598.0" prefWidth="804.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example._50zo.controller.GameStage2Controller">
    <children>
-      <ImageView fitHeight="631.0" fitWidth="804.0" layoutY="-26.0">
+      <ImageView fitHeight="631.0" fitWidth="828.0" layoutX="-23.0" layoutY="-16.0">
          <image>
             <Image url="@image1.3.jpg" />
          </image>
@@ -77,9 +77,9 @@
             <Font name="Arial Rounded MT Bold" size="12.0" />
          </font>
       </Label>
-      <Label fx:id="eliminatedMachine" layoutX="239.0" layoutY="141.0" textFill="WHITE">
+      <Label fx:id="eliminatedMachine" layoutX="303.0" layoutY="149.0" prefHeight="20.0" prefWidth="189.0" textFill="WHITE">
          <font>
-            <Font name="Arial Rounded MT Bold" size="12.0" />
+            <Font name="Arial Rounded MT Bold" size="16.0" />
          </font>
       </Label>
       <Button layoutX="663.0" layoutY="549.0" mnemonicParsing="false" onAction="#getOut" prefHeight="15.0" prefWidth="65.0" style="-fx-background-color: #e32f09; -fx-background-radius: 10;" text="SALIR" textFill="WHITE">
@@ -90,9 +90,9 @@
             <Cursor fx:constant="CLOSED_HAND" />
          </cursor>
       </Button>
-      <Label fx:id="turnTimer" layoutX="162.0" layoutY="406.0" textFill="WHITE">
+      <Label fx:id="turnTimer" layoutX="204.0" layoutY="169.0" prefHeight="34.0" prefWidth="198.0" textFill="WHITE">
          <font>
-            <Font name="Arial Rounded MT Bold" size="12.0" />
+            <Font name="Arial Rounded MT Bold" size="16.0" />
          </font>
       </Label>
    </children>

@@ -69,6 +69,11 @@ public class GameStage2Controller {
         this.numMachinePlayers = num;
     }
 
+    /**
+     * Handles the action of exiting the game stage and returning to the welcome screen.
+     * @param event
+     * @throws IOException
+     */
     @FXML
     private void getOut(ActionEvent event) throws IOException {
         // Close the victory window
@@ -212,6 +217,13 @@ public class GameStage2Controller {
         img.setOnMouseClicked(event -> {
             if (humanEliminated) {
                 msgHumanPlayer.setText("Has sido eliminado");
+                try{
+                    FifthStage over = FifthStage.getInstance();
+                    over.show();
+                    GameStage2.deleteInstance();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 return;
             }
             int possibleTotal = table.getTotalValue() + card.getNumericValue(table.getTotalValue());
