@@ -24,9 +24,27 @@ public class Card {
     public Card(String url, String value) {
         this.url = url;
         this.value = value;
-        this.image = new Image(String.valueOf(getClass().getResource(url)));
-        this.cardImageView = createCardImageView();
+        try {
+            this.image = new Image(String.valueOf(getClass().getResource(url)));
+            this.cardImageView = createCardImageView();
+        } catch (Exception e) {
+            // Evita error si JavaFX no está inicializado (por ejemplo, en pruebas)
+            this.image = null;
+            this.cardImageView = null;
+        }
     }
+
+    /**
+     * Constructor alternativo sin recursos gráficos (para pruebas unitarias).
+     */
+    public Card(String value) {
+        this.url = null;
+        this.value = value;
+        this.image = null;
+        this.cardImageView = null;
+    }
+
+
 
     /**
      * Returns the URL of the card image resource.
@@ -59,8 +77,13 @@ public class Card {
      */
     public ImageView getCard() {
         if (cardImageView == null || image == null) {
-            this.image = new Image(String.valueOf(getClass().getResource(url)));
-            this.cardImageView = createCardImageView();
+            try {
+                this.image = new Image(String.valueOf(getClass().getResource(url)));
+                this.cardImageView = createCardImageView();
+            } catch (Exception e) {
+                this.image = null;
+                this.cardImageView = null;
+            }
         }
         return cardImageView;
     }
@@ -72,8 +95,12 @@ public class Card {
      * @return the Image of this card
      */
     public Image getImage() {
-        if (image == null) {
-            this.image = new Image(String.valueOf(getClass().getResource(url)));
+        if (image == null && url != null) {
+            try {
+                this.image = new Image(String.valueOf(getClass().getResource(url)));
+            } catch (Exception e) {
+                this.image = null;
+            }
         }
         return image;
     }

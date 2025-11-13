@@ -8,7 +8,7 @@ import java.util.List;
  * The class also provides methods to check which cards can be legally played
  * according to the current total on the table.
  */
-public class Player {
+public class Player implements IPlayer{
     private ArrayList<Card> cardsPlayer;
 
     /**
@@ -24,6 +24,7 @@ public class Player {
      *
      * @param card The card to be added to the player's hand.
      */
+    @Override
     public void addCard(Card card){
 
         cardsPlayer.add(card);
@@ -34,6 +35,7 @@ public class Player {
      *
      * @return An ArrayList containing all cards in the player's hand.
      */
+    @Override
     public ArrayList<Card> getCardsPlayer() {
 
         return cardsPlayer;
@@ -44,6 +46,7 @@ public class Player {
      *
      * @param index The index of the card to remove.
      */
+    @Override
     public void removeCard(int index) {
 
         cardsPlayer.remove(index);
@@ -81,6 +84,7 @@ public class Player {
      * @param currentTotal current accumulated value on the table
      * @return true if the player can play at least one card; {@code false} otherwise
      */
+    @Override
     public boolean hasPlayableCard(int currentTotal) {
         for (Card card : cardsPlayer) {
             int value = card.getNumericValue(currentTotal);
