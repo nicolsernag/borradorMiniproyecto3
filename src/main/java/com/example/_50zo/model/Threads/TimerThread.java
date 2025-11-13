@@ -11,7 +11,7 @@ import javafx.application.Platform;
 
 public class TimerThread extends Thread{
     private final GameStage2Controller controller;
-    private final int timeLimitSeconds = 7; //time limit
+    private final int timeLimitSeconds = 10; //time limit
     private volatile boolean isRunning = true; // Flag to control the thread execution
 
     /**

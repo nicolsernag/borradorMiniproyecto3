@@ -44,7 +44,7 @@ public class GameStage2Controller {
 
     @FXML private Label labelTable;
     @FXML private Label msgHumanPlayer;
-    @FXML private Label newPlayerTurn;
+   // @FXML private Label newPlayerTurn;
     @FXML private Label eliminatedMachine;
     @FXML private Label turnTimer;
 
@@ -128,7 +128,7 @@ public class GameStage2Controller {
         showHumanCards();
         showMachineCards();
         msgHumanPlayer.setText("Tu turno. Juega una carta.");
-        newPlayerTurn.setText("");
+        //newPlayerTurn.setText("");
         timerThread = new TimerThread(this);
         timerThread.start();
 
@@ -230,7 +230,7 @@ public class GameStage2Controller {
             if (humanEliminated) {
                 msgHumanPlayer.setText("Has sido eliminado");
                 try{
-                    FifthStage over = FifthStage.getInstance();
+                    FourthStage over = FourthStage.getInstance();
                     over.show();
                     GameStage2.deleteInstance();
                 } catch (IOException e) {
@@ -292,7 +292,7 @@ public class GameStage2Controller {
     public void handleTimeExpired(){
         if (isMachineTurn) return;
         msgHumanPlayer.setText("¡Perdiste el turno por tiempo!");
-        newPlayerTurn.setText("");
+        //newPlayerTurn.setText("");
 
         startMachineTurns();
         turnTimer.setText("");
@@ -306,10 +306,10 @@ public class GameStage2Controller {
     private synchronized void startMachineTurns() {
         if(isMachineTurn) return;
         isMachineTurn = true;
-        newPlayerTurn.setText("");
+        //newPlayerTurn.setText("");
         msgHumanPlayer.setText("Turno de las máquinas...");
 
-        //detiene el temporizador del jugador humano
+        //stops timer
         if(timerThread != null) {
             timerThread.stopTimer();
             timerThread = null;
@@ -357,8 +357,8 @@ public class GameStage2Controller {
             Platform.runLater(() -> {
                 isMachineTurn = false;
                 eliminatedMachine.setText("");
-                msgHumanPlayer.setText("Tu turno. Juega una carta.");
-                newPlayerTurn.setText("Es tu turno. Juega una carta");
+                msgHumanPlayer.setText("Es tu turno. Juega una carta.");
+                //newPlayerTurn.setText("");
 
                 timerThread = new TimerThread(this);
                 timerThread.start();
