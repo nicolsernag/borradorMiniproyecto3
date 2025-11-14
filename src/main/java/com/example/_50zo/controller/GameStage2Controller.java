@@ -296,7 +296,7 @@ public class GameStage2Controller {
         //newPlayerTurn.setText("");
 
         startMachineTurns();
-        turnTimer.setText("");
+        turnTimer.setText("hola");
     }
 
 
