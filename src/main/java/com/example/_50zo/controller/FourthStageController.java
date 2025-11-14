@@ -4,14 +4,16 @@ import com.example._50zo.view.FirstStage;
 import com.example._50zo.view.FourthStage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 
 import java.io.IOException;
 
 /**
- * Controller class for the fourth stage of the 50zo application.
+ * Controller for the fourth stage of the 50zo application.
+ * <p>
+ * This stage represents the "defeat" screen shown when the human player
+ * is eliminated from the game. The controller handles navigation back
+ * to the initial stage of the application.
  */
-
 public class FourthStageController {
     @FXML
     /**

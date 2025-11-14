@@ -10,8 +10,25 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * Represents the Welcome Stage of the 50zo application.
+ * <p>
+ * This stage is displayed after the initial start screen and allows
+ * the user to choose the number of players or proceed to the next step
+ * in the game setup. It loads its layout through an FXML file and
+ * uses a Singleton pattern to ensure that only one instance is ever created.
+ */
 public class WelcomeStage extends Stage {
     private WelcomeStageController controller;
+
+    /**
+     * Private constructor that initializes and displays the WelcomeStage.
+     * <p>
+     * This method loads the FXML file, configures the scene,
+     * sets window properties such as title and icon, and displays the stage.
+     *
+     * @throws IOException if the FXML file cannot be loaded
+     */
     private WelcomeStage() throws IOException {
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("/com/example/_50zo/welcomeStage.fxml"));
@@ -26,13 +43,17 @@ public class WelcomeStage extends Stage {
         show();
     }
 
+    /**
+     * Returns the controller associated with this stage.
+     *
+     * @return a {@link WelcomeStageController} instance
+     */
     public WelcomeStageController getController(){
         return controller;
     }
 
     /**
-     * Internal class that implements the Singleton pattern.
-     * Contains a static instance of {@link WelcomeStage}
+     * Internal helper class used to implement a lazy-loaded Singleton instance.
      */
     private static class Holder{
         private static WelcomeStage INSTANCE=null;
@@ -52,7 +73,10 @@ public class WelcomeStage extends Stage {
     }
 
     /**
-     * Close the welcome window and delete its current instance.
+     * Closes the welcome stage and resets the stored Singleton instance.
+     * <p>
+     * After calling this method, a new instance may be created when
+     * {@link #getInstance()} is called again.
      */
     public static void deleteInstance() {
         if (WelcomeStage.Holder.INSTANCE != null) {

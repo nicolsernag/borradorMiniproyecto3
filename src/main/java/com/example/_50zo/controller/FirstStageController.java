@@ -14,18 +14,22 @@ import java.io.IOException;
  */
 public class FirstStageController {
 
-    @FXML
     /**
-     * Handles the action when the "INICIAR" button is pressed.
-     * This method transitions the application to the WelcomeStage.
-     * @param event
+     * Handles the action triggered when the "START" button is pressed.
+     * <p>
+     * This method opens the {@link WelcomeStage}, which allows the user
+     * to select the number of machine players, and then closes the current
+     * {@link FirstStage}.
+     *
+     * @param event the action event produced by the user interaction
      */
+    @FXML
     private void handlePlay(ActionEvent event) {
         try {
-            // Pasa a la pantalla de selección de jugadores
+            // Open the player selection screen
             WelcomeStage.getInstance().getController();
 
-            // Cierra la pantalla actual
+            // Close the current screen
             FirstStage.deleteInstance();
 
         } catch (Exception e) {

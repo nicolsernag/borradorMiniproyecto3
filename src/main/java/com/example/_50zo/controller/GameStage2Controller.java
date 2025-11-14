@@ -29,25 +29,28 @@ import java.util.List;
  */
 public class GameStage2Controller {
 
-    private int numMachinePlayers; // valor que viene del menú
+    /** Number of machine players selected in the previous stage. */
+    private int numMachinePlayers;
+
+    /** Timer thread counting down the human player's time per turn. */
     private TimerThread timerThread;
-    private boolean isMachineTurn = false; //evita desincronizacion
+
+    /** Flag used to avoid desynchronization between human and machine turns. */
+    private boolean isMachineTurn = false;
+
+    /** Indicates whether the human player has been eliminated from the game. */
     private boolean humanEliminated = false;
 
     @FXML private GridPane gridMachine1;
     @FXML private GridPane gridMachine2;
     @FXML private GridPane gridMachine3;
     @FXML private GridPane gridPaneHumanPlayer;
-
     @FXML private ImageView Table;
     @FXML private ImageView Deck;
-
     @FXML private Label labelTable;
     @FXML private Label msgHumanPlayer;
-   // @FXML private Label newPlayerTurn;
     @FXML private Label eliminatedMachine;
     @FXML private Label turnTimer;
-
 
     private Deck deck;
     private Table table;
@@ -56,7 +59,7 @@ public class GameStage2Controller {
     private List<GridPane> machineGrids = new ArrayList<>();
     private Game50 game;
 
-
+    /** Shared image instance representing the back side of a card. */
     private final Image backCardImage = new Image(
             getClass().getResourceAsStream(CardEnum.CARD_FACE_DOWN.getFilePath())
     );
@@ -77,16 +80,19 @@ public class GameStage2Controller {
      */
     @FXML
     private void getOut(ActionEvent event) throws IOException {
-        // Close the victory window
         GameStage2.deleteInstance();
-
-        // Open the main welcome screen
         FifthStage.getInstance().getController();
     }
 
     /**
-     * Initializes the core game objects such as the deck, table,
-     * and player instances.
+     * Initializes core game components:
+     * <ul>
+     *     <li>Human player</li>
+     *     <li>Deck of cards</li>
+     *     <li>Table</li>
+     *     <li>Game logic</li>
+     *     <li>Machine card grids</li>
+     * </ul>
      */
     public void initVariables(){
         humanPlayer = new Player();
@@ -113,13 +119,14 @@ public class GameStage2Controller {
         showDeckBack();
         deck.shuffle();
 
+        // Callback when the deck runs out and is refilled
         game.setOnDeckRefilled(() -> Platform.runLater(() -> {
-            msgHumanPlayer.setText("El mazo se acabó. Se barajaron las cartas.");
+            msgHumanPlayer.setText("El mazo se acabó. Se barajan las cartas de nuevo.");
             new Thread(() -> {
                 try {
-                    Thread.sleep(3000);
+                    Thread.sleep(5000);
                     Platform.runLater(() -> msgHumanPlayer.setText(""));
-                } catch (InterruptedException e) {}
+                } catch (InterruptedException ignored) {}
             }).start();
         }));
 
@@ -129,7 +136,6 @@ public class GameStage2Controller {
         showHumanCards();
         showMachineCards();
         msgHumanPlayer.setText("Tu turno. Juega una carta.");
-        //newPlayerTurn.setText("");
         timerThread = new TimerThread(this);
         timerThread.start();
 
@@ -184,7 +190,7 @@ public class GameStage2Controller {
     }
 
     /**
-     * Renders the machine players' cards as face-down cards in their respective grids.
+     * Displays machine player cards as face-down images.
      */
     private void showMachineCards(){
         for (int i = 0; i < 3; i++) {
@@ -205,7 +211,7 @@ public class GameStage2Controller {
     }
 
     /**
-     * Displays the human player's cards and assigns click events to each.
+     * Displays human player's hand and assigns click handlers to each card.
      */
     private void showHumanCards (){
         gridPaneHumanPlayer.getChildren().clear();
@@ -218,12 +224,20 @@ public class GameStage2Controller {
     }
 
     /**
-     * Assigns the mouse click event to a specific human player card.
-     * Handles playing the card, validating the move, and updating the UI.
+     * Assigns click behavior to a player card.
+     * <p>
+     * Handles:
+     * <ul>
+     *     <li>Invalid moves</li>
+     *     <li>Human elimination</li>
+     *     <li>Card playing</li>
+     *     <li>UI updates</li>
+     *     <li>Transition to machine turns</li>
+     * </ul>
      *
-     * @param img ImageView of the clicked card
-     * @param card Card object corresponding to the ImageView
-     * @param columnIndex position of the card in the player's grid
+     * @param img the clicked ImageView
+     * @param card the card represented by the image
+     * @param columnIndex horizontal position in the player's grid
      */
     private void setupCardClick(ImageView img, Card card, int columnIndex) {
         img.setOnMouseClicked(event -> {
@@ -301,8 +315,10 @@ public class GameStage2Controller {
 
 
     /**
-     * Starts the turns for all active machine players using concurrent threads.
-     * Each machine plays automatically after a random delay (2–4 seconds).
+     * Coordinates the execution of all machine player turns.
+     * <p>
+     * Runs each MachineThread sequentially and updates the UI after each move.
+     * Ensures correct synchronization and transition back to the human turn.
      */
     private synchronized void startMachineTurns() {
         if(isMachineTurn) return;
@@ -371,14 +387,7 @@ public class GameStage2Controller {
 
 
     /**
-     * Updates the image displayed on the game table to reflect the most recently played card.
-     * <p>
-     * This method retrieves the last card placed on the table from the {@code Game50} instance,
-     * obtains its image path, and updates the table's image display accordingly.
-     * If the image resource cannot be found or loaded, an error message is printed to the console.
-     * <p>
-     * The method handles potential exceptions gracefully to prevent the UI from crashing
-     * if the image path is incorrect or the resource is missing.
+     * Updates the displayed card image on the table based on the last played card.
      */
     private void updatePlayedCardImage() {
         Card lastCard = game.getTable().getCurrentCardOnTheTable();
@@ -408,8 +417,8 @@ public class GameStage2Controller {
     }
 
     /**
-     * Checks whether the game is over (only one player remains).
-     * Displays a message when the game ends.
+     * Checks whether only one player remains in the game.
+     * If the remaining player is the human, the victory window is shown.
      */
     private void checkGameOver() {
         int activePlayers = !humanEliminated ? 1 : 0;
@@ -429,7 +438,10 @@ public class GameStage2Controller {
         }
     }
 
-    //nico
+    /**
+     * Displays the image of the card-back on the deck ImageView.
+     * Loads the image from the CardEnum resource path.
+     */
     public void showDeckBack() {
         // Obtiene la ruta del reverso desde tu enum
         String backUrl = CardEnum.CARD_FACE_DOWN.getFilePath();

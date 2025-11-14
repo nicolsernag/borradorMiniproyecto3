@@ -13,6 +13,7 @@ import java.util.Stack;
  */
 public class Deck {
     private Stack<Card> deckOfCards;
+    private Runnable onDeckRefilled;
 
     /**
      * Constructs a new deck of cards and initializes it.
@@ -20,6 +21,10 @@ public class Deck {
     public Deck() {
         deckOfCards = new Stack<>();
         initializeDeck();
+    }
+
+    public void setOnDeckRefilled(Runnable onDeckRefilled) {
+        this.onDeckRefilled = onDeckRefilled;
     }
 
     /**
@@ -118,15 +123,8 @@ public class Deck {
         for ( Card c : cardsFromTable ) {
             deckOfCards.push(c);
         }
-    }
-
-    /**
-     * Adds a single card to the bottom of the deck.
-     * @param card the card to be inserted at the bottom
-     */
-    public void addToBottom(Card card){
-        if(card != null){
-            deckOfCards.insertElementAt(card, 0);
+        if (onDeckRefilled != null) {
+            onDeckRefilled.run();
         }
     }
 

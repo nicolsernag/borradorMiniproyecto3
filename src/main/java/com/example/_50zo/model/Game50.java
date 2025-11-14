@@ -1,7 +1,6 @@
 package com.example._50zo.model;
 
 import com.example._50zo.model.exceptions.InvalidMoveException;
-
 import java.util.List;
 
 /**
@@ -18,6 +17,7 @@ public class Game50 {
 
     private Runnable onDeckRefilled;
 
+
     /**
      * Constructs a new Game50 instance.
      *
@@ -31,9 +31,6 @@ public class Game50 {
         this.table = table;
     }
 
-    /**
-     * Sets a callback to run when the deck is refilled from the table.
-     */
     public void setOnDeckRefilled(Runnable onDeckRefilled) {
         this.onDeckRefilled = onDeckRefilled;
     }
@@ -77,26 +74,19 @@ public class Game50 {
 
         if(!deck.isEmpty()){
             player.addCard(deck.takeCard());
-        } else{
-            List<Card> cardsFromTable = table.removeAllExceptLast();
-            deck.refillFromTable(cardsFromTable);
-            if (onDeckRefilled != null) {
-                onDeckRefilled.run();
-            }
+            return true;
+        }
+        List<Card> cardsFromTable = table.removeAllExceptLast();
+        deck.refillFromTable(cardsFromTable);
 
-            if(!deck.isEmpty()){
-                player.addCard(deck.takeCard());
-            }
+        if (onDeckRefilled != null) {
+            onDeckRefilled.run();
+        }
+
+        if(!deck.isEmpty()){
+            player.addCard(deck.takeCard());
         }
         return true;
-    }
-
-    /**
-     * Draws a card directly from the deck.
-     * @return the card drawn from the deck
-     */
-    public Card drawFromDeck(){
-        return deck.takeCard();
     }
 
     /**
@@ -138,11 +128,8 @@ public class Game50 {
      * @return {@code true} if the player has at least one playable card; {@code false} otherwise
      */
     public boolean hasPlayableCard(Player player) {
-        int currentTotal = table.getTotalValue();
         for (Card c : player.getCardsPlayer()) {
-            if (canPlayCard(c)) {
-                return true;
-            }
+            if (canPlayCard(c)) return true;
         }
         return false;
     }
@@ -152,6 +139,7 @@ public class Game50 {
      * @param player the player to be eliminated
      */
     public void eliminatePlayer(Player player) {
+        if (player.getCardsPlayer().isEmpty()) return;
         System.out.println("Jugador eliminado, sus cartas regresan al fondo del mazo.");
         deck.addAllToBottom(player.getCardsPlayer());
         player.getCardsPlayer().clear();

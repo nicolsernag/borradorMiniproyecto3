@@ -64,9 +64,8 @@ public class Table {
      */
     public List<Card> removeAllExceptLast(){
         List<Card> removed = new ArrayList<>();
-        if (cardsTable.size() <= 1) {
-            return removed;
-        }
+        if (cardsTable.size() <= 1) return removed;
+
         for (int i = 0; i < cardsTable.size() -1; i++){
             removed.add(cardsTable.get(i));
         }

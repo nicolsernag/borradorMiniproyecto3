@@ -3,6 +3,7 @@ package com.example._50zo.model.Threads;
 import com.example._50zo.model.Card;
 import com.example._50zo.model.Game50;
 import com.example._50zo.model.Player;
+import javafx.application.Platform;
 
 /**
  * Represents a concurrent thread controlling a single machine player's turn
@@ -55,35 +56,41 @@ public class MachineThread extends Thread{
     @Override
     public void run() {
         try {
+            if (machinePlayer.getCardsPlayer().isEmpty()) {
+                return;
+            }
+
             // Simulate "thinking" time between 2 and 4 seconds
             int delay = 2000 + (int) (Math.random() * 2000);
             Thread.sleep(delay);
 
             synchronized (game){
-                if (game.hasPlayableCard(machinePlayer)) {
-                    for (Card card : machinePlayer.getCardsPlayer()) {
-                        if (game.canPlayCard(card)) {
-                            game.playCard(machinePlayer, card);
-                            break;
+                if (!game.hasPlayableCard(machinePlayer)) {
+                    if(!machinePlayer.getCardsPlayer().isEmpty()){
+                        game.eliminatePlayer(machinePlayer);
+
+                        if(eliminateMachinePlayer != null){
+                            Platform.runLater(eliminateMachinePlayer);
                         }
+                        Platform.runLater(updateUI);
                     }
-                } else {
-                    // No valid cards: eliminate player
-                    game.eliminatePlayer(machinePlayer);
-                    if (eliminateMachinePlayer != null) {
-                        eliminateMachinePlayer.run();
+                    return;
+                }
+
+                for (Card card : machinePlayer.getCardsPlayer()) {
+                    if (game.canPlayCard(card)) {
+                        game.playCard(machinePlayer, card);
+
+                        Thread.sleep(1000 + (int) (Math.random() * 1000));
+                        Platform.runLater(updateUI);
+                        return;
                     }
                 }
             }
 
-            // Update the UI on the JavaFX Application Thread
-            if (updateUI != null) {
-                updateUI.run();
-            }
-
         } catch (InterruptedException e) {
-            System.err.println("Hilo maquina interrumpido: " + e.getMessage());
             Thread.currentThread().interrupt();
+            System.err.println("Hilo maquina interrumpido: ");
         } catch (Exception e) {
             System.err.println("Error durante la ejecucion del hilo maquina: " + e.getMessage());
         }
