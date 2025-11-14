@@ -35,7 +35,7 @@ public class Card {
     }
 
     /**
-     * Constructor alternativo sin recursos gráficos (para pruebas unitarias).
+     * Alternative builder without graphical resources (for unit testing).
      */
     public Card(String value) {
         this.url = null;
