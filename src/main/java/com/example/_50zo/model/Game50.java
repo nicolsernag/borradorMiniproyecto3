@@ -2,6 +2,8 @@ package com.example._50zo.model;
 
 import com.example._50zo.model.exceptions.InvalidMoveException;
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Represents the main logic of the "Game50" card game.
@@ -16,7 +18,10 @@ public class Game50 {
     private Table table;
 
     private Runnable onDeckRefilled;
-
+    /**
+     * A set that keeps track of all cards that have been played during the game.
+     */
+    private final Set<Card> playedCards = new HashSet<>();
 
     /**
      * Constructs a new Game50 instance.
@@ -71,6 +76,7 @@ public class Game50 {
         }
         table.addCardOnTheTable(card);
         player.getCardsPlayer().remove(card);
+        playedCards.add(card);
 
         if(!deck.isEmpty()){
             player.addCard(deck.takeCard());
@@ -143,6 +149,11 @@ public class Game50 {
         System.out.println("Jugador eliminado, sus cartas regresan al fondo del mazo.");
         deck.addAllToBottom(player.getCardsPlayer());
         player.getCardsPlayer().clear();
+    }
+
+    /** Returns all unique played cards (HashSet). */
+    public Set<Card> getPlayedCards() {
+        return playedCards;
     }
 }
 
